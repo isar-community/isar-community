@@ -49,8 +49,8 @@ impl ParseCallbacks for Callbacks {
     }
 }
 
-const LIBMDBX_REPO: &str = "https://github.com/isar/libmdbx.git";
-const LIBMDBX_TAG: &str = "v0.12.9";
+const LIBMDBX_REPO: &str = "https://github.com/erthink/libmdbx.git";
+const LIBMDBX_BRANCH: &str = "архив/0.12";
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
@@ -64,12 +64,12 @@ fn main() {
         .arg("clone")
         .arg(LIBMDBX_REPO)
         .arg("--branch")
-        .arg(LIBMDBX_TAG)
+        .arg(LIBMDBX_BRANCH)
         .output()
         .unwrap();
 
     Command::new("make")
-        .arg("release-assets")
+        .arg("dist")
         .current_dir("libmdbx")
         .output()
         .unwrap();
