@@ -20,7 +20,6 @@ void main() {
           await testBuilder(
             getIsarGenerator(BuilderOptions.empty),
             {'a|${file.path}': content.join('\n')},
-            reader: await PackageAssetReader.currentIsolate(),
           );
         } on Exception catch (e) {
           error = e.toString();

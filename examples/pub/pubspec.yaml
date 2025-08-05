@@ -4,10 +4,9 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.17.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
   flutter: ">=1.17.0"
 
-isar_version: &isar_version 3.0.2 # define the version to be used
 
 dependencies:
   auto_size_text: ^3.0.0
@@ -19,8 +18,8 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^2.0.0
   google_fonts: ^3.0.1
-  isar_community: *isar_version
-  isar_community_flutter_libs: *isar_version
+  isar_community: 3.0.2
+  isar_community_flutter_libs: 3.0.2
   json_serializable: ^6.0.0
   json_annotation: ^4.6.0
   markdown: ^6.0.0
@@ -37,13 +36,15 @@ dependencies:
   flutter_svg: ^1.1.5
   flutter_html: ^3.0.0-alpha.6
   flutter_html_svg: ^3.0.0-alpha.4
+  copy_with_extension: ^8.0.0
 
 dev_dependencies:
   build_runner: ^2.0.0
   flutter_test:
     sdk: flutter
-  isar_community_generator: *isar_version
+  isar_community_generator: 3.0.2
   flutter_lints: ^2.0.1
+  copy_with_extension_gen: ^8.0.0
 
 flutter:
   uses-material-design: true
