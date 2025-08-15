@@ -72,3 +72,6 @@ isar-dart.h
 
 # Coverage
 coverage/
+
+# FVM Version Cache
+.fvm/
