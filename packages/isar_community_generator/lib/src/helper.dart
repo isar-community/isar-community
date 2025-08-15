@@ -2,23 +2,26 @@ import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:dartx/dartx.dart';
-import 'package:isar_community/isar.dart';
+import 'package:isar_community/isar.dart' as isar;
 import 'package:source_gen/source_gen.dart';
 
-const TypeChecker _collectionChecker = TypeChecker.fromRuntime(Collection);
-const TypeChecker _enumeratedChecker = TypeChecker.fromRuntime(Enumerated);
-const TypeChecker _embeddedChecker = TypeChecker.fromRuntime(Embedded);
-const TypeChecker _ignoreChecker = TypeChecker.fromRuntime(Ignore);
-const TypeChecker _nameChecker = TypeChecker.fromRuntime(Name);
-const TypeChecker _indexChecker = TypeChecker.fromRuntime(Index);
-const TypeChecker _backlinkChecker = TypeChecker.fromRuntime(Backlink);
+final TypeChecker _collectionChecker =
+    const TypeChecker.fromRuntime(isar.Collection);
+final TypeChecker _enumeratedChecker =
+    const TypeChecker.fromRuntime(isar.Enumerated);
+final TypeChecker _embeddedChecker =
+    const TypeChecker.fromRuntime(isar.Embedded);
+final TypeChecker _ignoreChecker = const TypeChecker.fromRuntime(isar.Ignore);
+final TypeChecker _nameChecker = const TypeChecker.fromRuntime(isar.Name);
+final TypeChecker _indexChecker = const TypeChecker.fromRuntime(isar.Index);
+final TypeChecker _backlinkChecker =
+    const TypeChecker.fromRuntime(isar.Backlink);
 
 extension ClassElementX on ClassElement {
   bool get hasZeroArgsConstructor {
     return constructors.any(
       (ConstructorElement c) =>
-          c.isPublic &&
-          !c.parameters.any((ParameterElement p) => !p.isOptional),
+          c.isPublic && !c.formalParameters.any((p) => !p.isOptional),
     );
   }
 
@@ -26,11 +29,10 @@ extension ClassElementX on ClassElement {
     final ignoreFields =
         collectionAnnotation?.ignore ?? embeddedAnnotation!.ignore;
     return [
-      ...accessors.mapNotNull((e) => e.variable2),
+      ...fields,
       if (collectionAnnotation?.inheritance ?? embeddedAnnotation!.inheritance)
         for (final InterfaceType supertype in allSupertypes) ...[
-          if (!supertype.isDartCoreObject)
-            ...supertype.accessors.mapNotNull((e) => e.variable2),
+          if (!supertype.isDartCoreObject) ...supertype.element.fields,
         ],
     ]
         .where(
@@ -40,12 +42,12 @@ extension ClassElementX on ClassElement {
               !_ignoreChecker.hasAnnotationOf(e.nonSynthetic) &&
               !ignoreFields.contains(e.name),
         )
-        .distinctBy((e) => e.name)
+        .distinctBy((e) => e.name!)
         .toList();
   }
 
   List<String> get enumConsts {
-    return fields.where((e) => e.isEnumConstant).map((e) => e.name).toList();
+    return fields.where((e) => e.isEnumConstant).map((e) => e.name!).toList();
   }
 }
 
@@ -54,41 +56,41 @@ extension PropertyElementX on PropertyInducingElement {
 
   bool get isLinks => type.element!.name == 'IsarLinks';
 
-  Enumerated? get enumeratedAnnotation {
+  isar.Enumerated? get enumeratedAnnotation {
     final ann = _enumeratedChecker.firstAnnotationOfExact(nonSynthetic);
     if (ann == null) {
       return null;
     }
     final typeIndex = ann.getField('type')!.getField('index')!.toIntValue()!;
-    return Enumerated(
-      EnumType.values[typeIndex],
+    return isar.Enumerated(
+      isar.EnumType.values[typeIndex],
       ann.getField('property')?.toStringValue(),
     );
   }
 
-  Backlink? get backlinkAnnotation {
+  isar.Backlink? get backlinkAnnotation {
     final ann = _backlinkChecker.firstAnnotationOfExact(nonSynthetic);
     if (ann == null) {
       return null;
     }
-    return Backlink(to: ann.getField('to')!.toStringValue()!);
+    return isar.Backlink(to: ann.getField('to')!.toStringValue()!);
   }
 
-  List<Index> get indexAnnotations {
+  List<isar.Index> get indexAnnotations {
     return _indexChecker.annotationsOfExact(nonSynthetic).map((DartObject ann) {
       final rawComposite = ann.getField('composite')!.toListValue();
-      final composite = <CompositeIndex>[];
+      final composite = <isar.CompositeIndex>[];
       if (rawComposite != null) {
         for (final c in rawComposite) {
           final indexTypeField = c.getField('type')!;
-          IndexType? indexType;
+          isar.IndexType? indexType;
           if (!indexTypeField.isNull) {
             final indexTypeIndex =
                 indexTypeField.getField('index')!.toIntValue()!;
-            indexType = IndexType.values[indexTypeIndex];
+            indexType = isar.IndexType.values[indexTypeIndex];
           }
           composite.add(
-            CompositeIndex(
+            isar.CompositeIndex(
               c.getField('property')!.toStringValue()!,
               type: indexType,
               caseSensitive: c.getField('caseSensitive')!.toBoolValue(),
@@ -97,12 +99,12 @@ extension PropertyElementX on PropertyInducingElement {
         }
       }
       final indexTypeField = ann.getField('type')!;
-      IndexType? indexType;
+      isar.IndexType? indexType;
       if (!indexTypeField.isNull) {
         final indexTypeIndex = indexTypeField.getField('index')!.toIntValue()!;
-        indexType = IndexType.values[indexTypeIndex];
+        indexType = isar.IndexType.values[indexTypeIndex];
       }
-      return Index(
+      return isar.Index(
         name: ann.getField('name')!.toStringValue(),
         composite: composite,
         unique: ann.getField('unique')!.toBoolValue()!,
@@ -127,12 +129,12 @@ extension ElementX on Element {
     return name;
   }
 
-  Collection? get collectionAnnotation {
+  isar.Collection? get collectionAnnotation {
     final ann = _collectionChecker.firstAnnotationOfExact(nonSynthetic);
     if (ann == null) {
       return null;
     }
-    return Collection(
+    return isar.Collection(
       inheritance: ann.getField('inheritance')!.toBoolValue()!,
       accessor: ann.getField('accessor')!.toStringValue(),
       ignore: ann
@@ -157,12 +159,12 @@ extension ElementX on Element {
     return accessor;
   }
 
-  Embedded? get embeddedAnnotation {
+  isar.Embedded? get embeddedAnnotation {
     final ann = _embeddedChecker.firstAnnotationOfExact(nonSynthetic);
     if (ann == null) {
       return null;
     }
-    return Embedded(
+    return isar.Embedded(
       inheritance: ann.getField('inheritance')!.toBoolValue()!,
       ignore: ann
           .getField('ignore')!
