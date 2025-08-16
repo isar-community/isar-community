@@ -1,63 +1,88 @@
 import 'package:analyzer/dart/constant/value.dart';
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:dartx/dartx.dart';
 import 'package:isar_community/isar.dart' as isar;
 import 'package:source_gen/source_gen.dart';
 
-final TypeChecker _collectionChecker =
-    const TypeChecker.fromRuntime(isar.Collection);
-final TypeChecker _enumeratedChecker =
-    const TypeChecker.fromRuntime(isar.Enumerated);
-final TypeChecker _embeddedChecker =
-    const TypeChecker.fromRuntime(isar.Embedded);
-final TypeChecker _ignoreChecker = const TypeChecker.fromRuntime(isar.Ignore);
-final TypeChecker _nameChecker = const TypeChecker.fromRuntime(isar.Name);
-final TypeChecker _indexChecker = const TypeChecker.fromRuntime(isar.Index);
-final TypeChecker _backlinkChecker =
-    const TypeChecker.fromRuntime(isar.Backlink);
+const TypeChecker _collectionChecker = TypeChecker.typeNamed(isar.Collection);
+const TypeChecker _enumeratedChecker = TypeChecker.typeNamed(isar.Enumerated);
+const TypeChecker _embeddedChecker = TypeChecker.typeNamed(isar.Embedded);
+const TypeChecker _ignoreChecker = TypeChecker.typeNamed(isar.Ignore);
+const TypeChecker _nameChecker = TypeChecker.typeNamed(isar.Name);
+const TypeChecker _indexChecker = TypeChecker.typeNamed(isar.Index);
+const TypeChecker _backlinkChecker = TypeChecker.typeNamed(isar.Backlink);
 
-extension ClassElementX on ClassElement {
+extension ClassElementX on ClassElement2 {
   bool get hasZeroArgsConstructor {
-    return constructors.any(
-      (ConstructorElement c) =>
-          c.isPublic && !c.formalParameters.any((p) => !p.isOptional),
+    return constructors2.any(
+      (ConstructorElement2 c) =>
+          c.isPublic &&
+          !c.formalParameters.any((FormalParameterElement p) => !p.isOptional),
     );
   }
 
-  List<PropertyInducingElement> get allAccessors {
+  List<FieldElement2> get allAccessors {
     final ignoreFields =
         collectionAnnotation?.ignore ?? embeddedAnnotation!.ignore;
     return [
-      ...fields,
+      ...fields2,
       if (collectionAnnotation?.inheritance ?? embeddedAnnotation!.inheritance)
         for (final InterfaceType supertype in allSupertypes) ...[
-          if (!supertype.isDartCoreObject) ...supertype.element.fields,
+          if (!supertype.isDartCoreObject)
+            ...(supertype.element3 as ClassElement2).fields2,
         ],
     ]
         .where(
-          (PropertyInducingElement e) =>
-              e.isPublic &&
-              !e.isStatic &&
-              !_ignoreChecker.hasAnnotationOf(e.nonSynthetic) &&
-              !ignoreFields.contains(e.name),
+          (FieldElement2 e) {
+            // Skip non-public and static fields
+            if (!e.isPublic || e.isStatic) return false;
+            
+            // Skip fields in the ignore list
+            if (ignoreFields.contains(e.name3)) return false;
+            
+            // For synthetic fields (created from getters), check the getter for @ignore
+            if (e.isSynthetic && e.getter2 != null) {
+              if (_ignoreChecker.hasAnnotationOf(e.getter2!)) return false;
+            }
+            
+            // Check if the field itself has @ignore
+            if (_ignoreChecker.hasAnnotationOf(e)) return false;
+            
+            return true;
+          }
         )
-        .distinctBy((e) => e.name!)
+        .distinctBy((e) => e.name3)
         .toList();
   }
 
   List<String> get enumConsts {
-    return fields.where((e) => e.isEnumConstant).map((e) => e.name!).toList();
+    return fields2
+        .where((e) => e.isEnumConstant)
+        .map((e) => e.name3 ?? '')
+        .toList();
   }
 }
 
-extension PropertyElementX on PropertyInducingElement {
-  bool get isLink => type.element!.name == 'IsarLink';
+extension PropertyElementX on FieldElement2 {
+  bool get isLink {
+    final dartType = type;
+    if (dartType is InterfaceType) {
+      return dartType.element3.name3 == 'IsarLink';
+    }
+    return false;
+  }
 
-  bool get isLinks => type.element!.name == 'IsarLinks';
+  bool get isLinks {
+    final dartType = type;
+    if (dartType is InterfaceType) {
+      return dartType.element3.name3 == 'IsarLinks';
+    }
+    return false;
+  }
 
   isar.Enumerated? get enumeratedAnnotation {
-    final ann = _enumeratedChecker.firstAnnotationOfExact(nonSynthetic);
+    final ann = _enumeratedChecker.firstAnnotationOfExact(this);
     if (ann == null) {
       return null;
     }
@@ -69,7 +94,7 @@ extension PropertyElementX on PropertyInducingElement {
   }
 
   isar.Backlink? get backlinkAnnotation {
-    final ann = _backlinkChecker.firstAnnotationOfExact(nonSynthetic);
+    final ann = _backlinkChecker.firstAnnotationOfExact(this);
     if (ann == null) {
       return null;
     }
@@ -77,7 +102,7 @@ extension PropertyElementX on PropertyInducingElement {
   }
 
   List<isar.Index> get indexAnnotations {
-    return _indexChecker.annotationsOfExact(nonSynthetic).map((DartObject ann) {
+    return _indexChecker.annotationsOfExact(this).map((DartObject ann) {
       final rawComposite = ann.getField('composite')!.toListValue();
       final composite = <isar.CompositeIndex>[];
       if (rawComposite != null) {
@@ -116,12 +141,12 @@ extension PropertyElementX on PropertyInducingElement {
   }
 }
 
-extension ElementX on Element {
+extension ElementX on Element2 {
   String get isarName {
-    final ann = _nameChecker.firstAnnotationOfExact(nonSynthetic);
+    final ann = _nameChecker.firstAnnotationOfExact(this);
     late String name;
     if (ann == null) {
-      name = displayName;
+      name = name3 ?? '';
     } else {
       name = ann.getField('name')!.toStringValue()!;
     }
@@ -130,7 +155,7 @@ extension ElementX on Element {
   }
 
   isar.Collection? get collectionAnnotation {
-    final ann = _collectionChecker.firstAnnotationOfExact(nonSynthetic);
+    final ann = _collectionChecker.firstAnnotationOfExact(this);
     if (ann == null) {
       return null;
     }
@@ -151,7 +176,7 @@ extension ElementX on Element {
       return accessor;
     }
 
-    accessor = displayName.decapitalize();
+    accessor = (name3 ?? '').decapitalize();
     if (!accessor.endsWith('s')) {
       accessor += 's';
     }
@@ -160,7 +185,7 @@ extension ElementX on Element {
   }
 
   isar.Embedded? get embeddedAnnotation {
-    final ann = _embeddedChecker.firstAnnotationOfExact(nonSynthetic);
+    final ann = _embeddedChecker.firstAnnotationOfExact(this);
     if (ann == null) {
       return null;
     }
@@ -175,12 +200,12 @@ extension ElementX on Element {
   }
 }
 
-void checkIsarName(String name, Element element) {
+void checkIsarName(String name, Element2 element) {
   if (name.isBlank || name.startsWith('_')) {
     err('Names must not be blank or start with "_".', element);
   }
 }
 
-Never err(String msg, [Element? element]) {
+Never err(String msg, [Element2? element]) {
   throw InvalidGenerationSourceError(msg, element: element);
 }

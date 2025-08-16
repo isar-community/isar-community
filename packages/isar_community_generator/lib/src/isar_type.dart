@@ -1,43 +1,46 @@
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:isar_community/isar.dart';
 import 'package:isar_community_generator/src/helper.dart';
 import 'package:source_gen/source_gen.dart';
 
-final TypeChecker _dateTimeChecker = const TypeChecker.fromRuntime(DateTime);
-bool _isDateTime(Element element) => _dateTimeChecker.isExactly(element);
+const TypeChecker _dateTimeChecker = TypeChecker.fromUrl('dart:core#DateTime');
+bool _isDateTime(Element2 element) => _dateTimeChecker.isExactly(element);
 
 extension DartTypeX on DartType {
   IsarType? get _primitiveIsarType {
     if (isDartCoreBool) {
       return IsarType.bool;
     } else if (isDartCoreInt) {
-      if (alias?.element.name == 'byte') {
+      if (alias?.element2.name3 == 'byte') {
         return IsarType.byte;
-      } else if (alias?.element.name == 'short') {
+      } else if (alias?.element2.name3 == 'short') {
         return IsarType.int;
       } else {
         return IsarType.long;
       }
     } else if (isDartCoreDouble) {
-      if (alias?.element.name == 'float') {
+      if (alias?.element2.name3 == 'float') {
         return IsarType.float;
       } else {
         return IsarType.double;
       }
     } else if (isDartCoreString) {
       return IsarType.string;
-    } else if (_isDateTime(element!)) {
-      return IsarType.dateTime;
-    } else if (element!.embeddedAnnotation != null) {
-      return IsarType.object;
+    } else if (this is InterfaceType) {
+      final element = (this as InterfaceType).element3;
+      if (_isDateTime(element as Element2)) {
+        return IsarType.dateTime;
+      } else if ((element as Element2).embeddedAnnotation != null) {
+        return IsarType.object;
+      }
     }
 
     return null;
   }
 
   bool get isIsarId {
-    return alias?.element.name == 'Id';
+    return alias?.element2.name3 == 'Id';
   }
 
   DartType get scalarType {
