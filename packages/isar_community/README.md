@@ -26,7 +26,7 @@
   <a href="https://isar-community.dev">Quickstart</a> •
   <a href="https://isar-community.dev/schema">Documentation</a> •
   <a href="https://github.com/isar-community/isar-community/tree/v3/examples/">Sample Apps</a> •
-  <a href="https://github.com/isar-community/isar-community/discussions">Support & Ideas</a> •
+  <a href="https://github.com/isar-community/isar-community/issues">Support & Ideas</a> •
   <a href="https://pub.dev/packages/isar_community">Pub.dev</a>
 </p>
 
@@ -75,6 +75,29 @@ dev_dependencies:
     version: *isar_version
   build_runner: any
 
+```
+
+Alternatively, if you need to access an older version of the package maintained by the community, you can use the configuration below.  
+
+> ℹ️ **Note:**  
+> This workaround should only be used if the recommended method above does not work for you.  
+> New package versions will be published using the previous method described above.
+
+
+```yaml
+dependencies:
+  isar: 
+    version: any
+    hosted: https://pub.isar-community.dev/
+  isar_flutter_libs:
+    version: any
+    hosted: https://pub.isar-community.dev/
+
+dev_dependencies:
+  isar_generator: 
+    version: any
+    hosted: https://pub.isar-community.dev/
+  build_runner: any
 ```
 
 ### 2. Annotate a Collection
