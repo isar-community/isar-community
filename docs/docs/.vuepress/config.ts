@@ -54,11 +54,11 @@ export default defineUserConfig({
         navbar: [
             {
                 text: "pub.dev",
-                link: "https://pub.dev/packages/isar",
+                link: "https://pub.dev/packages/isar_community",
             },
             {
                 text: "API",
-                link: "https://pub.dev/documentation/isar/latest/isar/isar-library.html",
+                link: "https://pub.dev/documentation/isar_community/latest/isar/",
             },
             {
                 text: "Telegram",
@@ -193,15 +193,15 @@ function getSidebar({ locale, tutorials, concepts, recipes, sampleApps, chnagelo
         },
         {
             text: sampleApps,
-            link: "https://github.com/isar-community/isar-community/tree/main/examples",
+            link: "https://github.com/isar-community/isar-community/tree/v3/examples/pub",
         },
         {
             text: chnagelog,
-            link: "https://github.com/isar-community/isar-community/blob/main/packages/isar/CHANGELOG.md",
+            link: "https://github.com/isar-community/isar-community/blob/v3/packages/isar_community/CHANGELOG.md",
         },
         {
             text: contributors,
-            link: "https://github.com/isar-community/isar-community#contributors-",
+            link: "https://github.com/isar-community/isar-community/blob/v3/packages/isar_community/README.md#contributors-",
         },
     ]
 }
