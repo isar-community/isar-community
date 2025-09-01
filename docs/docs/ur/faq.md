@@ -38,4 +38,4 @@ A little bit, yes. Isar will increase the download size of your app by about 1 -
 
 ### دستاویزات غلط ہیں / ٹائپنگ کی غلطی ہے۔
 
-Oh no, sorry. Please [open an issue](https://github.com/isar-community/isar/issues/new/choose) or, even better, a PR to fix it 💪.
+Oh no, sorry. Please [open an issue](https://github.com/isar-community/isar-community/issues/new/choose) or, even better, a PR to fix it 💪.

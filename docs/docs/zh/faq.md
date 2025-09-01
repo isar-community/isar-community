@@ -38,4 +38,4 @@ title: 常见疑问
 
 ### 文档有疏漏或错误。
 
-好吧，对不起。 请[在此开一个 Issue](https://github.com/isar-community/isar/issues/new/choose) 或者更好的话，提交一个 PR 来帮助修复 💪。
+好吧，对不起。 请[在此开一个 Issue](https://github.com/isar-community/isar-community/issues/new/choose) 或者更好的话，提交一个 PR 来帮助修复 💪。
