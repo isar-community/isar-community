@@ -29,7 +29,7 @@ dev_dependencies:
     sdk: flutter
   isar_community_generator:
     path: ../isar_community_generator
-  very_good_analysis: ^7.0.0
+  very_good_analysis: ^3.0.1
 
 dependency_overrides:
   isar_community:

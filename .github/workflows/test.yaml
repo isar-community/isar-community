@@ -32,6 +32,18 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_OVERRIDE || vars.FLUTTER_VERSION }}
+      - run: flutter pub get
+        working-directory: packages/isar_community
+      - run: flutter pub get
+        working-directory: packages/isar_community_flutter_libs
+      - run: flutter pub get
+        working-directory: packages/isar_community_generator
+      - run: flutter pub get
+        working-directory: packages/isar_community_inspector
+      - run: flutter pub get
+        working-directory: examples/pub
+      - run: flutter pub get
+        working-directory: packages/isar_test
       - name: Check formatting
         run: dart format --set-exit-if-changed .
 

@@ -19,4 +19,4 @@ dependencies:
 dev_dependencies:
   ffigen: ^19.0.0
   test: any
-  very_good_analysis: ^7.0.0
+  very_good_analysis: ^3.0.1
