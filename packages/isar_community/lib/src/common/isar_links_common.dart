@@ -8,13 +8,15 @@ const bool _kIsWeb = identical(0, 0.0);
 /// @nodoc
 abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
     with IsarLinks<OBJ>, SetMixin<OBJ> {
-  final _objects = <Id, OBJ>{};
+  final _savedObjects = <Id, OBJ>{};
 
   /// @nodoc
   final addedObjects = HashSet<OBJ>.identity();
 
   /// @nodoc
   final removedObjects = HashSet<OBJ>.identity();
+
+  final _savedAddedRemovedObjects = HashSet<OBJ>.identity();
 
   @override
   bool isLoaded = false;
@@ -26,7 +28,14 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
     if (isAttached && !isLoaded && !_kIsWeb) {
       loadSync();
     }
-    return _objects;
+    return _savedObjects;
+  }
+
+  Set<OBJ> get _allObjects {
+    if (isAttached && !isLoaded) {
+      _computeAllObjectsSet();
+    }
+    return _savedAddedRemovedObjects;
   }
 
   @override
@@ -54,11 +63,11 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
   }
 
   void _applyLoaded(List<OBJ> objects, bool overrideChanges) {
-    _objects.clear();
+    _savedObjects.clear();
     for (final object in objects) {
       final id = getId(object);
       if (id != Isar.autoIncrement) {
-        _objects[id] = object;
+        _savedObjects[id] = object;
       }
     }
 
@@ -70,22 +79,32 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
     }
 
     isLoaded = true;
+
+    _computeAllObjectsSet();
   }
 
   void _applyAddedRemoved() {
     for (final object in addedObjects) {
       final id = getId(object);
       if (id != Isar.autoIncrement) {
-        _objects[id] = object;
+        _savedObjects[id] = object;
       }
     }
 
     for (final object in removedObjects) {
       final id = getId(object);
       if (id != Isar.autoIncrement) {
-        _objects.remove(id);
+        _savedObjects.remove(id);
       }
     }
+  }
+
+  void _computeAllObjectsSet() {
+    _savedAddedRemovedObjects
+      ..clear()
+      ..addAll(_loadedObjects.values)
+      ..removeAll(removedObjects)
+      ..addAll(addedObjects);
   }
 
   @override
@@ -133,48 +152,35 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
     if (isAttached) {
       final id = getId(value);
       if (id != Isar.autoIncrement) {
-        if (_objects.containsKey(id)) {
+        if (_savedObjects.containsKey(id)) {
           return false;
         }
-        _objects[id] = value;
+        _savedObjects[id] = value;
       }
+
+      removedObjects.removeWhere((obj) => getId(obj) == id);
+    } else {
+      removedObjects.remove(value);
     }
 
-    removedObjects.remove(value);
-    return addedObjects.add(value);
+    final added = addedObjects.add(value);
+    if (added) {
+      _computeAllObjectsSet();
+    }
+    return added;
   }
 
   @override
-  bool contains(Object? element) {
-    requireAttached();
-
-    if (element is OBJ) {
-      final id = getId(element);
-      if (id != Isar.autoIncrement) {
-        return _loadedObjects.containsKey(id);
-      }
-    }
-    return false;
-  }
+  bool contains(Object? element) => _allObjects.contains(element);
 
   @override
-  Iterator<OBJ> get iterator => _loadedObjects.values.iterator;
+  Iterator<OBJ> get iterator => _allObjects.iterator;
 
   @override
-  int get length => _loadedObjects.length;
+  int get length => _allObjects.length;
 
   @override
-  OBJ? lookup(Object? element) {
-    requireAttached();
-
-    if (element is OBJ) {
-      final id = getId(element);
-      if (id != Isar.autoIncrement) {
-        return _loadedObjects[id];
-      }
-    }
-    return null;
-  }
+  OBJ? lookup(Object? element) => _allObjects.lookup(element);
 
   @override
   bool remove(Object? value) {
@@ -185,42 +191,35 @@ abstract class IsarLinksCommon<OBJ> extends IsarLinkBaseImpl<OBJ>
     if (isAttached) {
       final id = getId(value);
       if (id != Isar.autoIncrement) {
-        if (isLoaded && !_objects.containsKey(id)) {
+        if (isLoaded && !_savedObjects.containsKey(id)) {
           return false;
         }
-        _objects.remove(id);
+        _savedObjects.remove(id);
       }
     }
 
-    addedObjects.remove(value);
-    return removedObjects.add(value);
+    final removedAdded = addedObjects.remove(value);
+    final removed = removedAdded || removedObjects.add(value);
+    if (removed) {
+      _computeAllObjectsSet();
+    }
+    return removed;
   }
 
   @override
-  Set<OBJ> toSet() {
-    requireAttached();
-    return HashSet(
-      equals: (o1, o2) => getId(o1) == getId(o2),
-      // ignore: noop_primitive_operations
-      hashCode: (o) => getId(o).toInt(),
-      isValidKey: (o) => o is OBJ && getId(o) != Isar.autoIncrement,
-    )..addAll(_loadedObjects.values);
-  }
+  Set<OBJ> toSet() => _allObjects;
 
   @override
   void clear() {
-    _objects.clear();
+    _allObjects.clear();
+    _savedObjects.clear();
     addedObjects.clear();
     removedObjects.clear();
   }
 
   @override
   String toString() {
-    final content = IterableBase.iterableToFullString(
-      _objects.values,
-      '{',
-      '}',
-    );
+    final content = IterableBase.iterableToFullString(_allObjects, '{', '}');
     return 'IsarLinks($content)';
   }
 }
