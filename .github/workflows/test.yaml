@@ -292,7 +292,40 @@ jobs:
       - name: Build Isar Core
         run: |
           bash tool/build_linux.sh x64
-          mv libisar_linux_x64.so packages/isar_community_flutter_libs/linux/libisar.so
+          mv libisar_linux_x64.so packages/isar_community_flutter_libs/linux/libisar.x64.so
+      - name: Prepare Tests
+        run: sh tool/prepare_tests.sh
+      - name: Run Flutter Driver tests
+        run: |
+          flutter config --enable-linux-desktop
+          flutter test -d linux integration_test/integration_test.dart --dart-define STRESS=true
+        working-directory: packages/isar_test
+
+  integration_test_linux_arm:
+    name: Integration Test ARM Linux
+    runs-on: ubuntu-22.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          # Prebuilt ARM linux builds are not provided, so build flutter from source
+          channel: master
+          flutter-version: ${{ env.FLUTTER_OVERRIDE || vars.FLUTTER_VERSION }}
+      - run: flutter --version
+      - name: Prepare Build
+        uses: ./.github/actions/prepare-build
+      - name: Install Linux requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@v4
+      - name: Display Rust version
+        run: rustc --version && cargo --version
+      - name: Build Isar Core
+        run: |
+          bash tool/build_linux.sh aarch64
+          mv libisar_linux_arm64.so packages/isar_community_flutter_libs/linux/libisar.aarch64.so
       - name: Prepare Tests
         run: sh tool/prepare_tests.sh
       - name: Run Flutter Driver tests

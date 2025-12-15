@@ -214,8 +214,10 @@ extension on Abi {
       case Abi.macosArm64:
       case Abi.macosX64:
         return 'libisar.dylib';
+      case Abi.linuxArm64:
+        return 'libisar.aarch64.so';
       case Abi.linuxX64:
-        return 'libisar.so';
+        return 'libisar.x64.so';
       case Abi.windowsArm64:
       case Abi.windowsX64:
         return 'libisar.dll';
@@ -234,6 +236,8 @@ extension on Abi {
         return 'libisar_macos.dylib';
       case Abi.linuxX64:
         return 'libisar_linux_x64.so';
+      case Abi.linuxArm64:
+        return 'libisar_linux_arm64.so';
       case Abi.windowsArm64:
         return 'isar_windows_arm64.dll';
       case Abi.windowsX64:
