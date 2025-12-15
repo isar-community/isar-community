@@ -20,12 +20,12 @@ target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 
 # List of absolute paths to libraries that should be bundled with the plugin
 if("${FLUTTER_TARGET_PLATFORM}" STREQUAL "linux-arm64")
-    set(isar_flutter_libs_bundled_libraries
+    set(isar_community_flutter_libs_bundled_libraries
             "${CMAKE_CURRENT_SOURCE_DIR}/libisar.aarch64.so"
             PARENT_SCOPE
     )
 else()
-    set(isar_flutter_libs_bundled_libraries
+    set(isar_community_flutter_libs_bundled_libraries
             "${CMAKE_CURRENT_SOURCE_DIR}/libisar.x64.so"
             PARENT_SCOPE
     )

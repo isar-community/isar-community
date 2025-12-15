@@ -31,14 +31,14 @@ Future<void> init() async {
             'target',
             'aarch64-unknown-linux-gnu',
             'release',
-            'libisar.aarch64.so',
+            'libisar.so',
           ),
           Abi.linuxX64: path.join(
             rootDir,
             'target',
             'x86_64-unknown-linux-gnu',
             'release',
-            'libisar.x64.so',
+            'libisar.so',
           ),
           Abi.windowsX64: path.join(
             rootDir,
