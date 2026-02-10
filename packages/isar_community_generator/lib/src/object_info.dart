@@ -2,19 +2,11 @@ import 'dart:convert';
 
 import 'package:dartx/dartx.dart';
 import 'package:isar_community/isar.dart';
-
+import 'package:meta/meta.dart';
 import 'package:xxh3/xxh3.dart';
 
-/// Generates a web-safe integer ID from a hash value.
-/// JavaScript's Number.MAX_SAFE_INTEGER is 2^53 - 1 = 9007199254740991
-///
-/// This implementation ensures:
-/// 1. All generated IDs are within JavaScript's safe integer range
-/// 2. Maintains good distribution properties
-/// 3. Handles negative values correctly
-/// 4. Provides deterministic results across platforms
-/// 5. Avoids zero values for better debugging
-int _generateWebSafeId(int hash) {
+@visibleForTesting
+int generateWebSafeId(int hash) {
   // JavaScript safe integer range: -(2^53 - 1) to (2^53 - 1)
   const maxSafeInteger = 9007199254740991;
 
@@ -54,7 +46,7 @@ class ObjectInfo {
   final List<ObjectIndex> indexes;
   final List<ObjectLink> links;
 
-  int get id => _generateWebSafeId(xxh3(utf8.encode(isarName)));
+  int get id => generateWebSafeId(xxh3(utf8.encode(isarName)));
 
   bool get isEmbedded => accessor == null;
 
@@ -199,7 +191,7 @@ class ObjectIndex {
   final bool unique;
   final bool replace;
 
-  late final int id = _generateWebSafeId(xxh3(utf8.encode(name)));
+  late final int id = generateWebSafeId(xxh3(utf8.encode(name)));
 }
 
 class ObjectLink {
@@ -228,6 +220,6 @@ class ObjectLink {
     final colId = xxh3(utf8.encode(col), seed: isBacklink ? 1 : 0);
 
     final name = targetLinkIsarName ?? isarName;
-    return _generateWebSafeId(xxh3(utf8.encode(name), seed: colId));
+    return generateWebSafeId(xxh3(utf8.encode(name), seed: colId));
   }
 }
