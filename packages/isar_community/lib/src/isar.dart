@@ -18,7 +18,7 @@ abstract class Isar {
   }
 
   /// The version of the Isar library.
-  static const version = '3.3.0-dev.3';
+  static const version = '3.3.0';
 
   /// Smallest valid id.
   static const Id minId = isarMinId;
