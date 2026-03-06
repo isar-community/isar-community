@@ -4,11 +4,11 @@ import 'package:isar_community_inspector/query_builder/query_filter.dart';
 
 class QueryGroup extends StatelessWidget {
   const QueryGroup({
-    super.key,
     required this.collection,
     required this.group,
     required this.level,
     required this.onChanged,
+    super.key,
     this.onDelete,
   });
 
@@ -196,11 +196,11 @@ class _Guideline extends StatelessWidget {
 
 class GroupFilterButton extends StatelessWidget {
   const GroupFilterButton({
-    super.key,
     required this.idName,
     required this.group,
     required this.level,
     required this.onAdd,
+    super.key,
   });
 
   final String idName;

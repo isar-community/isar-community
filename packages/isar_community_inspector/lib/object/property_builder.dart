@@ -3,11 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 
 class PropertyBuilder extends StatefulWidget {
   const PropertyBuilder({
-    super.key,
     required this.property,
+    required this.type,
+    super.key,
     this.underline = false,
     this.value,
-    required this.type,
     this.children = const [],
   });
 

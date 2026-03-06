@@ -7,11 +7,11 @@ import 'package:isar_community_inspector/object/property_value.dart';
 
 class LinkPropertyView extends StatelessWidget {
   const LinkPropertyView({
-    super.key,
     required this.link,
     required this.schemas,
     required this.object,
     required this.onUpdate,
+    super.key,
   });
 
   final LinkSchema link;

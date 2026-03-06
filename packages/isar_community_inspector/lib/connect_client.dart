@@ -60,7 +60,7 @@ class ConnectClient {
         client._queryChangedController.add(null);
       },
     };
-    service.onExtensionEvent.listen((Event event) {
+    service.onExtensionEvent.listen((event) {
       final data = event.extensionData?.data ?? {};
       handlers[event.extensionKind]?.call(data);
     });

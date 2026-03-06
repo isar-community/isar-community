@@ -7,11 +7,11 @@ import 'package:isar_community_inspector/object/property_value.dart';
 
 class EmbeddedPropertyView extends StatelessWidget {
   const EmbeddedPropertyView({
-    super.key,
     required this.property,
     required this.schemas,
     required this.object,
     required this.onUpdate,
+    super.key,
   });
 
   final PropertySchema property;

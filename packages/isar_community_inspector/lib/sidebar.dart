@@ -7,7 +7,6 @@ import 'package:isar_community_inspector/main.dart';
 
 class Sidebar extends StatelessWidget {
   const Sidebar({
-    super.key,
     required this.instances,
     required this.selectedInstance,
     required this.onInstanceSelected,
@@ -15,6 +14,7 @@ class Sidebar extends StatelessWidget {
     required this.collectionInfo,
     required this.selectedCollection,
     required this.onCollectionSelected,
+    super.key,
   });
 
   final List<String> instances;

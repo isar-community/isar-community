@@ -21,11 +21,11 @@ const objectsPerPage = 20;
 
 class CollectionArea extends StatefulWidget {
   const CollectionArea({
-    super.key,
     required this.instance,
     required this.collection,
     required this.schemas,
     required this.client,
+    super.key,
   });
 
   final String instance;
@@ -46,7 +46,7 @@ class _CollectionAreaState extends State<CollectionArea> {
 
   var page = 0;
   var filter = const FilterGroup.and([]);
-  late var sortProperty = widget.collectionSchema.idName;
+  late String sortProperty = widget.collectionSchema.idName;
   var sortAsc = true;
   var objects = <IsarObject>[];
   var objectsCount = 0;

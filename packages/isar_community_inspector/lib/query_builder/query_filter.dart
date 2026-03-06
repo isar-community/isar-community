@@ -5,10 +5,10 @@ import 'package:isar_community_inspector/util.dart';
 
 class QueryFilter extends StatelessWidget {
   const QueryFilter({
-    super.key,
     required this.collection,
     required this.condition,
     required this.onChanged,
+    super.key,
   });
 
   final CollectionSchema<dynamic> collection;

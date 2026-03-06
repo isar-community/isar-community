@@ -5,12 +5,12 @@ import 'package:isar_community_inspector/object/property_value.dart';
 
 class PropertyView extends StatelessWidget {
   const PropertyView({
-    super.key,
     required this.property,
     required this.value,
     required this.isId,
     required this.isIndexed,
     required this.onUpdate,
+    super.key,
   });
 
   final PropertySchema property;

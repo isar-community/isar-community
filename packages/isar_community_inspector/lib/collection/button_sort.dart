@@ -3,11 +3,11 @@ import 'package:isar_community/isar.dart';
 
 class SortButtons extends StatelessWidget {
   const SortButtons({
-    super.key,
     required this.properties,
     required this.property,
     required this.asc,
     required this.onChanged,
+    super.key,
   });
 
   final List<PropertySchema> properties;

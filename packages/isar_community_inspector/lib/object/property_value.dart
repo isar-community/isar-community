@@ -5,9 +5,9 @@ import 'package:isar_community/isar.dart';
 class PropertyValue extends StatelessWidget {
   const PropertyValue(
     this.value, {
-    super.key,
     required this.enumMap,
     required this.type,
+    super.key,
     this.onUpdate,
   });
 
@@ -34,7 +34,7 @@ class PropertyValue extends StatelessWidget {
       return GestureDetector(
         onTapDown: onUpdate == null
             ? null
-            : (TapDownDetails details) async {
+            : (details) async {
                 final newValue = await showMenu(
                   context: context,
                   position: RelativeRect.fromLTRB(
@@ -71,7 +71,7 @@ class PropertyValue extends StatelessWidget {
         return GestureDetector(
           onTapDown: onUpdate == null
               ? null
-              : (TapDownDetails details) async {
+              : (details) async {
                   final newValue = await showMenu(
                     context: context,
                     position: RelativeRect.fromLTRB(

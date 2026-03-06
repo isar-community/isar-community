@@ -8,13 +8,13 @@ import 'package:isar_community_inspector/object/object_view.dart';
 
 class ObjectsListSliver extends StatelessWidget {
   const ObjectsListSliver({
-    super.key,
     required this.instance,
     required this.collection,
     required this.schemas,
     required this.objects,
     required this.onUpdate,
     required this.onDelete,
+    super.key,
   });
 
   final String instance;
@@ -31,8 +31,8 @@ class ObjectsListSliver extends StatelessWidget {
     final collectionSchema = schemas[collection]! as CollectionSchema;
     return SliverList(
       delegate: SliverChildBuilderDelegate(childCount: objects.length, (
-        BuildContext context,
-        int index,
+        context,
+        index,
       ) {
         final object = objects[index];
         return Card(

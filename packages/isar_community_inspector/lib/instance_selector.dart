@@ -3,10 +3,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class InstanceSelector extends StatefulWidget {
   const InstanceSelector({
-    super.key,
     required this.instances,
     required this.selectedInstance,
     required this.onSelected,
+    super.key,
   });
 
   final List<String> instances;
@@ -31,7 +31,7 @@ class _InstanceSelectorState extends State<InstanceSelector>
 
   @override
   void initState() {
-    _animation.addStatusListener((AnimationStatus status) {
+    _animation.addStatusListener((status) {
       setState(() {});
     });
     super.initState();
@@ -100,9 +100,9 @@ class _InstanceSelectorState extends State<InstanceSelector>
 
 class InstanceButton extends StatelessWidget {
   const InstanceButton({
-    super.key,
     required this.instance,
     required this.onTap,
+    super.key,
   });
 
   final String instance;
@@ -140,11 +140,11 @@ class InstanceButton extends StatelessWidget {
 
 class SelectedInstanceButton extends StatelessWidget {
   const SelectedInstanceButton({
-    super.key,
     required this.instance,
     required this.onTap,
     required this.hasMultiple,
     required this.color,
+    super.key,
   });
 
   final String instance;

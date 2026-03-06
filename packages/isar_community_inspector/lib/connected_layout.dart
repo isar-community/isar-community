@@ -8,10 +8,10 @@ import 'package:isar_community_inspector/sidebar.dart';
 
 class ConnectedLayout extends StatefulWidget {
   const ConnectedLayout({
-    super.key,
     required this.client,
     required this.instances,
     required this.collections,
+    super.key,
   });
 
   final ConnectClient client;

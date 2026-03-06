@@ -7,12 +7,12 @@ import 'package:isar_community_inspector/object/property_view.dart';
 
 class ObjectView extends StatelessWidget {
   const ObjectView({
-    super.key,
-    this.root = false,
     required this.schemaName,
     required this.schemas,
     required this.object,
     required this.onUpdate,
+    super.key,
+    this.root = false,
   });
 
   final bool root;
