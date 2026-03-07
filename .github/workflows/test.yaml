@@ -148,6 +148,7 @@ jobs:
         run: |
           flutter pub add json_annotation
           flutter pub add intl
+          echo -e "\ndependency_overrides:\n  test_api: 0.7.7" >> pubspec.yaml
           flutter pub add isar_test --path ../isar_test
         working-directory: packages/isar_community
       - name: Collect isar Coverage
