@@ -1,12 +1,11 @@
 // ignore_for_file: public_member_api_docs
 
 import 'dart:async';
-import 'dart:html';
 
 import 'package:isar_community/isar.dart';
-
 import 'package:isar_community/src/web/bindings.dart';
 import 'package:isar_community/src/web/isar_web.dart';
+import 'package:web/web.dart' as web;
 
 const Symbol _zoneTxn = #zoneTxn;
 
@@ -49,8 +48,8 @@ class IsarImpl extends Isar {
       await txn.commit().wait<dynamic>();
     } catch (e) {
       txn.abort();
-      if (e is DomException) {
-        if (e.name == DomException.CONSTRAINT) {
+      if (e is web.DOMException) {
+        if (e.name == 'ConstraintError') {
           throw IsarUniqueViolationError();
         } else {
           throw IsarError('${e.name}: ${e.message}');

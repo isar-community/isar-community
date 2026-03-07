@@ -1,11 +1,11 @@
 // ignore_for_file: public_member_api_docs
 
-import 'dart:indexed_db';
 import 'dart:js';
 
 import 'package:isar_community/isar.dart';
 import 'package:js/js.dart';
 import 'package:js/js_util.dart';
+import 'package:web/web.dart' as web;
 
 @JS('JSON.stringify')
 external String stringify(dynamic value);
@@ -120,14 +120,14 @@ class IsarLinkJs {
 @JS('IdWhereClause')
 @anonymous
 class IdWhereClauseJs {
-  external KeyRange? range;
+  external web.IDBKeyRange? range;
 }
 
 @JS('IndexWhereClause')
 @anonymous
 class IndexWhereClauseJs {
   external String indexName;
-  external KeyRange? range;
+  external web.IDBKeyRange? range;
 }
 
 @JS('LinkWhereClause')

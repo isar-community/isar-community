@@ -1,16 +1,12 @@
 // ignore_for_file: public_member_api_docs, invalid_use_of_protected_member
 
-import 'dart:html';
-//import 'dart:js_util';
+import 'dart:async';
+import 'dart:js_interop';
 
 import 'package:isar_community/isar.dart';
-/*import 'package:isar_community/src/common/schemas.dart';
-
-import 'package:isar_community/src/web/bindings.dart';
-import 'package:isar_community/src/web/isar_collection_impl.dart';
-import 'package:isar_community/src/web/isar_impl.dart';*/
 import 'package:isar_community/src/web/isar_web.dart';
 import 'package:meta/meta.dart';
+import 'package:web/web.dart' as web;
 
 bool _loaded = false;
 Future<void> initializeIsarWeb([String? jsUrl]) async {
@@ -19,13 +15,19 @@ Future<void> initializeIsarWeb([String? jsUrl]) async {
   }
   _loaded = true;
 
-  final script = ScriptElement();
+  final script = web.document.createElement('script') as web.HTMLScriptElement;
   script.type = 'text/javascript';
-  // ignore: unsafe_html
   script.src = 'https://unpkg.com/isar@${Isar.version}/dist/index.js';
   script.async = true;
-  document.head!.append(script);
-  await script.onLoad.first.timeout(
+  web.document.head!.append(script);
+  final completer = Completer<void>();
+  script.onload = ((web.Event event) {
+    completer.complete();
+  }).toJS;
+  script.onerror = ((web.Event event) {
+    completer.completeError(IsarError('Failed to load Isar'));
+  }).toJS;
+  await completer.future.timeout(
     const Duration(seconds: 30),
     onTimeout: () {
       throw IsarError('Failed to load Isar');

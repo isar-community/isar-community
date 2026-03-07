@@ -22,6 +22,7 @@ dependencies:
   ffi: ">=2.0.0 <3.0.0"
   js: any
   meta: ^1.7.0
+  web: ">=0.4.0 <2.0.0"
 
 dev_dependencies:
   ffigen: ^19.0.0

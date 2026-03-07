@@ -1,13 +1,13 @@
 // ignore_for_file: public_member_api_docs, invalid_use_of_protected_member
 
-import 'dart:indexed_db';
+import 'dart:js_interop';
 
 import 'package:isar_community/isar.dart';
-
 import 'package:isar_community/src/web/bindings.dart';
 import 'package:isar_community/src/web/isar_collection_impl.dart';
 import 'package:isar_community/src/web/isar_web.dart';
 import 'package:isar_community/src/web/query_impl.dart';
+import 'package:web/web.dart' as web;
 
 Query<T> buildWebQuery<T, OBJ>(
   IsarCollectionImpl<OBJ> col,
@@ -132,30 +132,40 @@ LinkWhereClauseJs _buildLinkWhereClause(
     ..id = wc.id;
 }
 
-KeyRange? _buildKeyRange(
+web.IDBKeyRange? _buildKeyRange(
   dynamic lower,
   dynamic upper,
   bool includeLower,
   bool includeUpper,
 ) {
-  if (lower != null) {
-    if (upper != null) {
+  final lowerJs = (lower as Object?)?.jsify();
+  final upperJs = (upper as Object?)?.jsify();
+  if (lowerJs != null) {
+    if (upperJs != null) {
       final boundsEqual = idbCmp(lower, upper) == 0;
       if (boundsEqual) {
         if (includeLower && includeUpper) {
-          return KeyRange.only(lower);
+          return web.IDBKeyRange.only(lowerJs);
         } else {
           // empty range
-          return KeyRange.upperBound(double.negativeInfinity, true);
+          return web.IDBKeyRange.upperBound(
+            double.negativeInfinity.toJS,
+            true,
+          );
         }
       }
 
-      return KeyRange.bound(lower, upper, !includeLower, !includeUpper);
+      return web.IDBKeyRange.bound(
+        lowerJs,
+        upperJs,
+        !includeLower,
+        !includeUpper,
+      );
     } else {
-      return KeyRange.lowerBound(lower, !includeLower);
+      return web.IDBKeyRange.lowerBound(lowerJs, !includeLower);
     }
-  } else if (upper != null) {
-    return KeyRange.upperBound(upper, !includeUpper);
+  } else if (upperJs != null) {
+    return web.IDBKeyRange.upperBound(upperJs, !includeUpper);
   }
   return null;
 }
