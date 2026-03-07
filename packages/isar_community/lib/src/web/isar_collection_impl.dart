@@ -2,8 +2,8 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:js';
-import 'dart:js_util';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:isar_community/isar.dart';
@@ -36,9 +36,9 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
 
   @tryInline
   OBJ deserializeObject(Object object) {
-    final id = getProperty<int>(object, idName);
+    final dynamic id = (object as JSObject)[idName];
     final reader = IsarReaderImpl(object);
-    return schema.deserialize(id, reader, _offsets, isar.offsets);
+    return schema.deserialize(id as int, reader, _offsets, isar.offsets);
   }
 
   @tryInline
@@ -90,10 +90,10 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
     return isar.getTxn(true, (IsarTxnJs txn) async {
       final serialized = <Object>[];
       for (final object in objects) {
-        final jsObj = newObject<Object>();
+        final jsObj = JSObject();
         final writer = IsarWriterImpl(jsObj);
         schema.serialize(object, writer, _offsets, isar.offsets);
-        setProperty(jsObj, idName, schema.getId(object));
+        jsObj[idName] = schema.getId(object).toJS;
         serialized.add(jsObj);
       }
       final ids = await native.putAll(txn, serialized).wait<List<dynamic>>();
@@ -150,7 +150,8 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   @override
   Future<void> importJson(List<Map<String, dynamic>> json) {
     return isar.getTxn(true, (IsarTxnJs txn) async {
-      await native.putAll(txn, json.map(jsify).toList()).wait<dynamic>();
+      final jsObjects = json.map((e) => e.jsify()).toList();
+      await native.putAll(txn, jsObjects).wait<dynamic>();
     });
   }
 
@@ -185,14 +186,14 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
 
   @override
   Stream<void> watchLazy({bool fireImmediately = false}) {
-    JsFunction? stop;
+    JSFunction? stop;
     final controller = StreamController<void>(
       onCancel: () {
-        stop?.apply([]);
+        stop?.callAsFunction();
       },
     );
 
-    final void Function() callback = allowInterop(() => controller.add(null));
+    final callback = (() => controller.add(null)).toJS;
     stop = native.watchLazy(callback);
 
     return controller.stream;
@@ -204,17 +205,17 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
     bool fireImmediately = false,
     bool deserialize = true,
   }) {
-    JsFunction? stop;
+    JSFunction? stop;
     final controller = StreamController<OBJ?>(
       onCancel: () {
-        stop?.apply([]);
+        stop?.callAsFunction();
       },
     );
 
-    final Null Function(Object? obj) callback = allowInterop((Object? obj) {
+    final callback = ((Object? obj) {
       final object = deserialize && obj != null ? deserializeObject(obj) : null;
       controller.add(object);
-    });
+    }).toJS;
     stop = native.watchObject(id, callback);
 
     return controller.stream;

@@ -1,14 +1,21 @@
 // ignore_for_file: public_member_api_docs
 
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
+
 import 'package:isar_community/isar.dart';
 import 'package:isar_community/src/web/isar_reader_impl.dart';
-import 'package:js/js_util.dart';
 import 'package:meta/dart2js.dart';
 
 class IsarWriterImpl implements IsarWriter {
   IsarWriterImpl(this.object);
 
   final Object object;
+
+  @tryInline
+  void _write(int offset, Object? value) {
+    (object as JSObject)['$offset'] = value.jsify();
+  }
 
   @tryInline
   @override
@@ -18,53 +25,49 @@ class IsarWriterImpl implements IsarWriter {
         : value == false
             ? 0
             : nullNumber;
-    setProperty(object, offset, number);
+    _write(offset, number);
   }
 
   @tryInline
   @override
   void writeByte(int offset, int value) {
-    setProperty(object, offset, value);
+    _write(offset, value);
   }
 
   @tryInline
   @override
   void writeInt(int offset, int? value) {
-    setProperty(object, offset, value ?? nullNumber);
+    _write(offset, value ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeFloat(int offset, double? value) {
-    setProperty(object, offset, value ?? nullNumber);
+    _write(offset, value ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeLong(int offset, int? value) {
-    setProperty(object, offset, value ?? nullNumber);
+    _write(offset, value ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeDouble(int offset, double? value) {
-    setProperty(object, offset, value ?? nullNumber);
+    _write(offset, value ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeDateTime(int offset, DateTime? value) {
-    setProperty(
-      object,
-      offset,
-      value?.toUtc().millisecondsSinceEpoch ?? nullNumber,
-    );
+    _write(offset, value?.toUtc().millisecondsSinceEpoch ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeString(int offset, String? value) {
-    setProperty(object, offset, value ?? nullNumber);
+    _write(offset, value ?? nullNumber);
   }
 
   @tryInline
@@ -76,17 +79,17 @@ class IsarWriterImpl implements IsarWriter {
     T? value,
   ) {
     if (value != null) {
-      final object = newObject<Object>();
-      final writer = IsarWriterImpl(object);
+      final innerObj = JSObject();
+      final writer = IsarWriterImpl(innerObj);
       serialize(value, writer, allOffsets[T]!, allOffsets);
-      setProperty(this.object, offset, object);
+      (object as JSObject)['$offset'] = innerObj;
     }
   }
 
   @tryInline
   @override
   void writeByteList(int offset, List<int>? values) {
-    setProperty(object, offset, values ?? nullNumber);
+    _write(offset, values ?? nullNumber);
   }
 
   @tryInline
@@ -101,35 +104,35 @@ class IsarWriterImpl implements IsarWriter {
                   : nullNumber,
         )
         .toList();
-    setProperty(object, offset, list ?? nullNumber);
+    _write(offset, list ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeIntList(int offset, List<int?>? values) {
     final list = values?.map((e) => e ?? nullNumber).toList();
-    setProperty(object, offset, list ?? nullNumber);
+    _write(offset, list ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeFloatList(int offset, List<double?>? values) {
     final list = values?.map((e) => e ?? nullNumber).toList();
-    setProperty(object, offset, list ?? nullNumber);
+    _write(offset, list ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeLongList(int offset, List<int?>? values) {
     final list = values?.map((e) => e ?? nullNumber).toList();
-    setProperty(object, offset, list ?? nullNumber);
+    _write(offset, list ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeDoubleList(int offset, List<double?>? values) {
     final list = values?.map((e) => e ?? nullNumber).toList();
-    setProperty(object, offset, list ?? nullNumber);
+    _write(offset, list ?? nullNumber);
   }
 
   @tryInline
@@ -138,14 +141,14 @@ class IsarWriterImpl implements IsarWriter {
     final list = values
         ?.map((e) => e?.toUtc().millisecondsSinceEpoch ?? nullNumber)
         .toList();
-    setProperty(object, offset, list ?? nullNumber);
+    _write(offset, list ?? nullNumber);
   }
 
   @tryInline
   @override
   void writeStringList(int offset, List<String?>? values) {
     final list = values?.map((e) => e ?? nullNumber).toList();
-    setProperty(object, offset, list ?? nullNumber);
+    _write(offset, list ?? nullNumber);
   }
 
   @tryInline
@@ -159,13 +162,13 @@ class IsarWriterImpl implements IsarWriter {
     if (values != null) {
       final list = values.map((e) {
         if (e != null) {
-          final object = newObject<Object>();
-          final writer = IsarWriterImpl(object);
+          final innerObj = JSObject();
+          final writer = IsarWriterImpl(innerObj);
           serialize(e, writer, allOffsets[T]!, allOffsets);
-          return object;
+          return innerObj;
         }
       }).toList();
-      setProperty(object, offset, list);
+      (object as JSObject)['$offset'] = list.jsify();
     }
   }
 }

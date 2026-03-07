@@ -1,10 +1,11 @@
 // ignore_for_file: public_member_api_docs
 
-import 'dart:js';
+import 'dart:js_interop' hide JS;
+import 'dart:js_interop_unsafe';
 
 import 'package:isar_community/isar.dart';
+// ignore: deprecated_member_use
 import 'package:js/js.dart';
-import 'package:js/js_util.dart';
 import 'package:web/web.dart' as web;
 
 @JS('JSON.stringify')
@@ -20,7 +21,7 @@ Map<String, dynamic> jsMapToDart(Object obj) {
   final keys = objectKeys(obj);
   final map = <String, dynamic>{};
   for (final key in keys) {
-    map[key] = getProperty<dynamic>(obj, key);
+    map[key] = (obj as JSObject)[key];
   }
   return map;
 }
@@ -29,7 +30,14 @@ Map<String, dynamic> jsMapToDart(Object obj) {
 class Promise {}
 
 extension PromiseX on Promise {
-  Future<T> wait<T>() => promiseToFuture(this);
+  Future<T> wait<T>() {
+    final dynamic self = this;
+    final promise = self as JSPromise<JSAny?>;
+    return promise.toDart.then<T>((JSAny? v) {
+      final dynamic result = v;
+      return result as T;
+    });
+  }
 }
 
 @JS('openIsar')
@@ -63,7 +71,7 @@ typedef ObjectChangeCallbackJs = void Function(Object? object);
 
 typedef QueryChangeCallbackJs = void Function(List<dynamic> results);
 
-typedef StopWatchingJs = JsFunction;
+typedef StopWatchingJs = JSFunction;
 
 @JS('IsarCollection')
 class IsarCollectionJs {
@@ -89,18 +97,18 @@ class IsarCollectionJs {
 
   external Promise clear(IsarTxnJs txn);
 
-  external StopWatchingJs watchLazy(ChangeCallbackJs callback);
+  external StopWatchingJs watchLazy(JSFunction callback);
 
-  external StopWatchingJs watchObject(Id id, ObjectChangeCallbackJs callback);
+  external StopWatchingJs watchObject(Id id, JSFunction callback);
 
   external StopWatchingJs watchQuery(
     QueryJs query,
-    QueryChangeCallbackJs callback,
+    JSFunction callback,
   );
 
   external StopWatchingJs watchQueryLazy(
     QueryJs query,
-    ChangeCallbackJs callback,
+    JSFunction callback,
   );
 }
 

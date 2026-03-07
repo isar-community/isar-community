@@ -2,7 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:js';
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:isar_community/isar.dart';
@@ -117,10 +117,10 @@ class QueryImpl<T> extends Query<T> {
 
   @override
   Stream<List<T>> watch({bool fireImmediately = false}) {
-    JsFunction? stop;
+    JSFunction? stop;
     final controller = StreamController<List<T>>(
       onCancel: () {
-        stop?.apply([]);
+        stop?.callAsFunction();
       },
     );
 
@@ -128,11 +128,9 @@ class QueryImpl<T> extends Query<T> {
       findAll().then(controller.add);
     }
 
-    final Null Function(List<dynamic> results) callback = allowInterop((
-      List<dynamic> results,
-    ) {
+    final callback = ((List<dynamic> results) {
       controller.add(results.map((e) => deserialize(e as Object)).toList());
-    });
+    }).toJS;
     stop = col.native.watchQuery(queryJs, callback);
 
     return controller.stream;
@@ -140,16 +138,16 @@ class QueryImpl<T> extends Query<T> {
 
   @override
   Stream<void> watchLazy({bool fireImmediately = false}) {
-    JsFunction? stop;
+    JSFunction? stop;
     final controller = StreamController<void>(
       onCancel: () {
-        stop?.apply([]);
+        stop?.callAsFunction();
       },
     );
 
-    final Null Function() callback = allowInterop(() {
+    final callback = (() {
       controller.add(null);
-    });
+    }).toJS;
     stop = col.native.watchQueryLazy(queryJs, callback);
 
     return controller.stream;
