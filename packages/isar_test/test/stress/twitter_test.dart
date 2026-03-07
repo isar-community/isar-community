@@ -53,7 +53,9 @@ void main() async {
           expect(await col.where().tCount(), 500000);
           expect(await col.where().favoriteCountProperty().tSum(), 307278);
           expect(
-              await col.where().favoriteCountProperty().tAverage(), 0.614556);
+            await col.where().favoriteCountProperty().tAverage(),
+            0.614556,
+          );
           expect(await col.where().favoriteCountProperty().tMin(), 0);
           expect(await col.where().favoriteCountProperty().tMax(), 2317);
 
