@@ -73,10 +73,13 @@ Matcher throwsIsarError([String? contains]) {
 
 Matcher get throwsAssertionError {
   var matcher = anything;
-  assert(() {
-    matcher = throwsA(isA<AssertionError>());
-    return true;
-  }(), 'only in debug mode');
+  assert(
+    () {
+      matcher = throwsA(isA<AssertionError>());
+      return true;
+    }(),
+    'only in debug mode',
+  );
   return matcher;
 }
 
