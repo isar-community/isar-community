@@ -1,3 +1,8 @@
+## 3.3.0
+
+### Fixes
+- [Linux] Adds compabitility with `GLIBC_2.36` ([#58](https://github.com/isar-community/isar-community/issues/58), [#60](https://github.com/isar-community/isar-community/issues/60))
+
 ## 3.3.0-dev.3
 
 ### Updates  

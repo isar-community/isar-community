@@ -200,40 +200,40 @@ void main() {
         ]);
         await qEqual(
           col.where().value1EqualToValue2Between(
-            'a',
-            null,
-            'b',
-            includeUpper: false,
-          ),
+                'a',
+                null,
+                'b',
+                includeUpper: false,
+              ),
           [obj2, obj3, obj4],
         );
         await qEqual(
           col.where().value1EqualToValue2Between(
-            'a',
-            null,
-            'b',
-            includeLower: false,
-          ),
+                'a',
+                null,
+                'b',
+                includeLower: false,
+              ),
           [obj3, obj4, obj5],
         );
         await qEqual(
           col.where().value1EqualToValue2Between(
-            'a',
-            null,
-            'b',
-            includeLower: false,
-            includeUpper: false,
-          ),
+                'a',
+                null,
+                'b',
+                includeLower: false,
+                includeUpper: false,
+              ),
           [obj3, obj4],
         );
         await qEqual(
           col.where().value1EqualToValue2Between(
-            'a',
-            'a',
-            'b',
-            includeLower: false,
-            includeUpper: false,
-          ),
+                'a',
+                'a',
+                'b',
+                includeLower: false,
+                includeUpper: false,
+              ),
           [],
         );
       });

@@ -167,8 +167,8 @@ class _Guideline extends StatelessWidget {
               final newType = group.type == FilterGroupType.and
                   ? FilterGroupType.or
                   : group.type == FilterGroupType.or
-                  ? FilterGroupType.xor
-                  : FilterGroupType.and;
+                      ? FilterGroupType.xor
+                      : FilterGroupType.and;
               onChanged(FilterGroup(type: newType, filters: group.filters));
             },
             side: BorderSide.none,
@@ -245,12 +245,12 @@ extension on FilterGroupType {
   String get name => this == FilterGroupType.and
       ? 'AND'
       : this == FilterGroupType.or
-      ? 'OR'
-      : 'XOR';
+          ? 'OR'
+          : 'XOR';
 
   Color get color => this == FilterGroupType.and
       ? Colors.blue
       : this == FilterGroupType.or
-      ? Colors.orange
-      : Colors.green;
+          ? Colors.orange
+          : Colors.green;
 }

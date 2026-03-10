@@ -11,10 +11,10 @@ class DateTimeModel {
     required this.nullableValues,
     required this.valuesNullable,
     required this.nullableValuesNullable,
-  }) : hash = values,
-       nullableHash = nullableValues,
-       hashNullable = valuesNullable,
-       nullableHashNullable = nullableValuesNullable;
+  })  : hash = values,
+        nullableHash = nullableValues,
+        hashNullable = valuesNullable,
+        nullableHashNullable = nullableValuesNullable;
 
   Id id = Isar.autoIncrement;
 
@@ -335,44 +335,44 @@ void main() {
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementEqualTo(
-          DateTime(2001),
-        ),
+              DateTime(2001),
+            ),
         [obj1],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementEqualTo(
-          DateTime(2002),
-        ),
+              DateTime(2002),
+            ),
         [obj2, obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementEqualTo(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj1, obj2, obj5],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementEqualTo(
-          DateTime(2004),
-        ),
+              DateTime(2004),
+            ),
         [obj4, obj5],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementEqualTo(
-          DateTime(2005),
-        ),
+              DateTime(2005),
+            ),
         [obj4, obj5, obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementEqualTo(
-          DateTime(2006),
-        ),
+              DateTime(2006),
+            ),
         [obj5, obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementEqualTo(
-          DateTime(2042),
-        ),
+              DateTime(2042),
+            ),
         [],
       );
 
@@ -382,63 +382,63 @@ void main() {
       );
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementEqualTo(
-          DateTime(2001),
-        ),
+              DateTime(2001),
+            ),
         [obj1, obj5],
       );
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementEqualTo(
-          DateTime(2004),
-        ),
+              DateTime(2004),
+            ),
         [obj4, obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementEqualTo(
-          DateTime(2005),
-        ),
+              DateTime(2005),
+            ),
         [obj4, obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementEqualTo(
-          DateTime(2006),
-        ),
+              DateTime(2006),
+            ),
         [obj4],
       );
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementEqualTo(
-          DateTime(2042),
-        ),
+              DateTime(2042),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementEqualTo(
-          DateTime(0),
-        ),
+              DateTime(0),
+            ),
         [obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementEqualTo(
-          DateTime(2001),
-        ),
+              DateTime(2001),
+            ),
         [obj1],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementEqualTo(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementEqualTo(
-          DateTime(2005),
-        ),
+              DateTime(2005),
+            ),
         [obj6],
       );
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementEqualTo(
-          DateTime(2042),
-        ),
+              DateTime(2042),
+            ),
         [],
       );
     });
@@ -475,22 +475,22 @@ void main() {
 
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementGreaterThan(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj4, obj5, obj6],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementGreaterThan(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj4, obj6],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementGreaterThan(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj6],
       );
     });
@@ -503,22 +503,22 @@ void main() {
 
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementLessThan(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj1, obj2, obj5, obj6],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementLessThan(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj1, obj5, obj6],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementLessThan(
-          DateTime(2003),
-        ),
+              DateTime(2003),
+            ),
         [obj1, obj4, obj6],
       );
     });
@@ -526,33 +526,33 @@ void main() {
     isarTest('.elementBetween()', () async {
       await qEqualSet(
         isar.dateTimeModels.where().valuesElementBetween(
-          DateTime(2002),
-          DateTime(2004),
-        ),
+              DateTime(2002),
+              DateTime(2004),
+            ),
         [obj1, obj2, obj5],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesElementBetween(
-          DateTime(2002),
-          DateTime(2004),
-        ),
+              DateTime(2002),
+              DateTime(2004),
+            ),
         [obj1, obj2, obj4, obj5, obj6],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().valuesNullableElementBetween(
-          DateTime(2002),
-          DateTime(2004),
-        ),
+              DateTime(2002),
+              DateTime(2004),
+            ),
         [obj4, obj6],
       );
 
       await qEqualSet(
         isar.dateTimeModels.where().nullableValuesNullableElementBetween(
-          DateTime(2002),
-          DateTime(2004),
-        ),
+              DateTime(2002),
+              DateTime(2004),
+            ),
         [obj6],
       );
     });

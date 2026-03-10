@@ -91,11 +91,11 @@ void main() {
       ]);
       await qEqual(
         col.filter().fieldBetween(
-          1,
-          2,
-          includeLower: false,
-          includeUpper: false,
-        ),
+              1,
+              2,
+              includeLower: false,
+              includeUpper: false,
+            ),
         [],
       );
       await qEqual(col.filter().fieldBetween(null, 1), [

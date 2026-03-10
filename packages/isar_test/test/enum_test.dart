@@ -30,13 +30,13 @@ class EnumModel {
   );
 
   EnumModel.test(TestEnum value)
-    : id = Isar.autoIncrement,
-      ordinalEnum = value,
-      nameEnum = value,
-      byteEnum = value,
-      shortEnum = value,
-      intEnum = value,
-      stringEnum = value;
+      : id = Isar.autoIncrement,
+        ordinalEnum = value,
+        nameEnum = value,
+        byteEnum = value,
+        shortEnum = value,
+        intEnum = value,
+        stringEnum = value;
 
   static final model1 = EnumModel.test(TestEnum.option1);
   static final model2 = EnumModel.test(TestEnum.option2);

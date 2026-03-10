@@ -170,8 +170,8 @@ void main() {
 
       await qEqualSet(
         isar.sourceModels.filter().link(
-          (q) => q.nameEqualTo('target 3').and().nameContains('3'),
-        ),
+              (q) => q.nameEqualTo('target 3').and().nameContains('3'),
+            ),
         [source3],
       );
 

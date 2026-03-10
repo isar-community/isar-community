@@ -56,7 +56,7 @@ class InheritingModel extends BaseModel {
 @Collection(inheritance: false)
 class NonInheritingModel extends BaseModel {
   NonInheritingModel({required this.age, required this.nickname})
-    : super(name: '', nickname: nickname);
+      : super(name: '', nickname: nickname);
 
   Id id = Isar.autoIncrement;
 
@@ -231,15 +231,15 @@ void main() {
 
       await qEqualSet(
         isar.inheritingModels.filter().link(
-          (q) => q.nameEqualTo(inheritingObj3.name),
-        ),
+              (q) => q.nameEqualTo(inheritingObj3.name),
+            ),
         {inheritingObj5},
       );
 
       await qEqualSet(
         isar.inheritingModels.filter().link(
-          (q) => q.nameEqualTo(inheritingObj4.name),
-        ),
+              (q) => q.nameEqualTo(inheritingObj4.name),
+            ),
         {},
       );
     });

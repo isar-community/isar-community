@@ -100,10 +100,10 @@ void main() {
         ]);
         await qEqual(
           col.filter().listElementBetween(
-            utc(2010),
-            utc(2020),
-            includeUpper: false,
-          ),
+                utc(2010),
+                utc(2020),
+                includeUpper: false,
+              ),
           [obj3],
         );
         await qEqual(col.filter().listElementBetween(null, utc(2010)), [

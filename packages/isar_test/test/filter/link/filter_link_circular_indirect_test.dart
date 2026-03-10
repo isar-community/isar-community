@@ -178,58 +178,58 @@ void main() {
     isarTest('.bLinks() then .cLinks() then .aLinks()', () async {
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) => q.cLinks((q) => q.aLinks((q) => q.nameStartsWith('a'))),
-        ),
+              (q) => q.cLinks((q) => q.aLinks((q) => q.nameStartsWith('a'))),
+            ),
         [a1, a2, a3, a4],
       );
 
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 1'))),
-        ),
+              (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 1'))),
+            ),
         [a1, a2, a3, a4],
       );
 
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 2'))),
-        ),
+              (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 2'))),
+            ),
         [a2, a3, a4],
       );
 
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 3'))),
-        ),
+              (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 3'))),
+            ),
         [a3, a4],
       );
 
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 4'))),
-        ),
+              (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 4'))),
+            ),
         [a4],
       );
 
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 5'))),
-        ),
+              (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 5'))),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 6'))),
-        ),
+              (q) => q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('a 6'))),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.modelAs.filter().bLinks(
-          (q) =>
-              q.cLinks((q) => q.aLinks((q) => q.nameEqualTo('non existing'))),
-        ),
+              (q) => q.cLinks(
+                  (q) => q.aLinks((q) => q.nameEqualTo('non existing'))),
+            ),
         [],
       );
     });
@@ -237,58 +237,58 @@ void main() {
     isarTest('.cLinks() then .aLinks() then .bLinks()', () async {
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) => q.aLinks((q) => q.bLinks((q) => q.nameStartsWith('b'))),
-        ),
+              (q) => q.aLinks((q) => q.bLinks((q) => q.nameStartsWith('b'))),
+            ),
         [b1, b2, b3, b4],
       );
 
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 1'))),
-        ),
+              (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 1'))),
+            ),
         [b1, b2, b3, b4],
       );
 
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 2'))),
-        ),
+              (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 2'))),
+            ),
         [b2, b3, b4],
       );
 
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 3'))),
-        ),
+              (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 3'))),
+            ),
         [b3, b4],
       );
 
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 4'))),
-        ),
+              (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 4'))),
+            ),
         [b4],
       );
 
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 5'))),
-        ),
+              (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 5'))),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 6'))),
-        ),
+              (q) => q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('b 6'))),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.modelBs.filter().cLinks(
-          (q) =>
-              q.aLinks((q) => q.bLinks((q) => q.nameEqualTo('non existing'))),
-        ),
+              (q) => q.aLinks(
+                  (q) => q.bLinks((q) => q.nameEqualTo('non existing'))),
+            ),
         [],
       );
     });
@@ -296,58 +296,58 @@ void main() {
     isarTest('.aLinks() then .bLinks() then .cLinks()', () async {
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) => q.bLinks((q) => q.cLinks((q) => q.nameStartsWith('c'))),
-        ),
+              (q) => q.bLinks((q) => q.cLinks((q) => q.nameStartsWith('c'))),
+            ),
         [c1, c2, c3, c4],
       );
 
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 1'))),
-        ),
+              (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 1'))),
+            ),
         [c1, c2, c3, c4],
       );
 
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 2'))),
-        ),
+              (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 2'))),
+            ),
         [c2, c3, c4],
       );
 
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 3'))),
-        ),
+              (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 3'))),
+            ),
         [c3, c4],
       );
 
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 4'))),
-        ),
+              (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 4'))),
+            ),
         [c4],
       );
 
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 5'))),
-        ),
+              (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 5'))),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 6'))),
-        ),
+              (q) => q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('c 6'))),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.modelCs.filter().aLinks(
-          (q) =>
-              q.bLinks((q) => q.cLinks((q) => q.nameEqualTo('non existing'))),
-        ),
+              (q) => q.bLinks(
+                  (q) => q.cLinks((q) => q.nameEqualTo('non existing'))),
+            ),
         [],
       );
     });

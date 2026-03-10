@@ -10,8 +10,8 @@ Future<void> init() async {
     final binaryName = Platform.isWindows
         ? 'isar.dll'
         : Platform.isMacOS
-        ? 'libisar.dylib'
-        : 'libisar.so';
+            ? 'libisar.dylib'
+            : 'libisar.so';
     try {
       await Isar.initializeIsarCore();
     } catch (e) {

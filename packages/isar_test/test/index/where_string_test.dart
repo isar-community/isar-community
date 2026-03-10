@@ -302,11 +302,11 @@ void main() {
 
       await qEqualSet(
         isar.stringModels.where().valueBetween(
-          '',
-          'string 2',
-          includeLower: false,
-          includeUpper: false,
-        ),
+              '',
+              'string 2',
+              includeLower: false,
+              includeUpper: false,
+            ),
         [obj1],
       );
     });

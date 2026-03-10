@@ -106,11 +106,11 @@ void main() {
       ]);
       await qEqual(
         col.where().fieldBetween(
-          1,
-          2,
-          includeLower: false,
-          includeUpper: false,
-        ),
+              1,
+              2,
+              includeLower: false,
+              includeUpper: false,
+            ),
         [],
       );
       await qEqual(col.where().fieldBetween(null, 1), [

@@ -244,9 +244,9 @@ void main() {
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().intsElementLessThan(
-          0,
-          include: true,
-        ),
+              0,
+              include: true,
+            ),
         [obj0, obj3, obj5],
       );
 
@@ -329,51 +329,51 @@ void main() {
     isarTest('DateTimes query', () async {
       await qEqualSet(
         isar.multiEntryIndexModels.where().dateTimesElementEqualTo(
-          DateTime(1970),
-        ),
+              DateTime(1970),
+            ),
         [obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().dateTimesElementEqualTo(
-          DateTime(2000, 2, 2),
-        ),
+              DateTime(2000, 2, 2),
+            ),
         [obj1],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().dateTimesElementNotEqualTo(
-          DateTime(2020),
-        ),
+              DateTime(2020),
+            ),
         [obj1, obj3, obj4, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().dateTimesElementLessThan(
-          DateTime(2000),
-        ),
+              DateTime(2000),
+            ),
         [obj1, obj3, obj4, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().dateTimesElementLessThan(
-          DateTime(0),
-        ),
+              DateTime(0),
+            ),
         [],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().dateTimesElementGreaterThan(
-          DateTime(2010, 4, 22),
-        ),
+              DateTime(2010, 4, 22),
+            ),
         [obj0, obj4, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().dateTimesElementBetween(
-          DateTime(2005),
-          DateTime(2030),
-        ),
+              DateTime(2005),
+              DateTime(2030),
+            ),
         [obj0, obj4],
       );
 
@@ -395,58 +395,58 @@ void main() {
     isarTest('Strings sensitive query', () async {
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementEqualTo(
-          'fork',
-        ),
+              'fork',
+            ),
         [obj3],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementNotEqualTo(
-          'forks',
-        ),
+              'forks',
+            ),
         [obj0, obj1, obj3, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementLessThan(
-          'Greek',
-        ),
+              'Greek',
+            ),
         [obj0, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementGreaterThan(
-          'bee',
-        ),
+              'bee',
+            ),
         [obj1, obj3, obj4],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementBetween(
-          'Fork',
-          'Potato',
-        ),
+              'Fork',
+              'Potato',
+            ),
         [obj3, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementStartsWith(
-          'FO',
-        ),
+              'FO',
+            ),
         [obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementStartsWith(
-          'fork',
-        ),
+              'fork',
+            ),
         [obj3, obj4],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsSensitiveElementStartsWith(
-          'Qwerty',
-        ),
+              'Qwerty',
+            ),
         [],
       );
 
@@ -468,8 +468,8 @@ void main() {
     isarTest('Strings insensitive query', () async {
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsInsensitiveElementEqualTo(
-          'foo',
-        ),
+              'foo',
+            ),
         [obj0, obj5],
       );
 
@@ -480,30 +480,30 @@ void main() {
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsInsensitiveElementNotEqualTo(
-          'bar',
-        ),
+              'bar',
+            ),
         [obj0, obj3, obj4, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsInsensitiveElementLessThan(
-          'D',
-        ),
+              'D',
+            ),
         [obj0, obj1, obj3, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsInsensitiveElementGreaterThan(
-          'KeTcHuP',
-        ),
+              'KeTcHuP',
+            ),
         [obj3, obj4, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryIndexModels.where().stringsInsensitiveElementBetween(
-          'abc',
-          'def',
-        ),
+              'abc',
+              'def',
+            ),
         [obj0, obj1, obj5],
       );
 
@@ -624,8 +624,8 @@ void main() {
 
       await qEqualSet(
         isar.multiEntryNullableIndexModels.where().boolsElementNotEqualTo(
-          false,
-        ),
+              false,
+            ),
         [obj0, obj1, obj3, obj4, obj5],
       );
 
@@ -695,8 +695,8 @@ void main() {
 
       await qEqualSet(
         isar.multiEntryNullableIndexModels.where().doublesElementGreaterThan(
-          40,
-        ),
+              40,
+            ),
         [obj0, obj5],
       );
 
@@ -733,30 +733,30 @@ void main() {
 
       await qEqualSet(
         isar.multiEntryNullableIndexModels.where().dateTimesElementNotEqualTo(
-          DateTime(2020),
-        ),
+              DateTime(2020),
+            ),
         [obj0, obj3, obj4, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryNullableIndexModels.where().dateTimesElementLessThan(
-          DateTime(2000),
-        ),
+              DateTime(2000),
+            ),
         [obj3, obj4, obj5],
       );
 
       await qEqualSet(
         isar.multiEntryNullableIndexModels.where().dateTimesElementGreaterThan(
-          DateTime(2005, 1, 4),
-        ),
+              DateTime(2005, 1, 4),
+            ),
         [obj0],
       );
 
       await qEqualSet(
         isar.multiEntryNullableIndexModels.where().dateTimesElementBetween(
-          DateTime(2000),
-          DateTime(2020),
-        ),
+              DateTime(2000),
+              DateTime(2020),
+            ),
         [obj0, obj4],
       );
 

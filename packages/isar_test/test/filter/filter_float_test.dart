@@ -136,11 +136,11 @@ void main() {
       ]);
       await qEqual(
         col.filter().fieldBetween(
-          1.1,
-          3.3,
-          includeLower: false,
-          includeUpper: false,
-        ),
+              1.1,
+              3.3,
+              includeLower: false,
+              includeUpper: false,
+            ),
         [obj2],
       );
       await qEqual(col.filter().fieldBetween(1.2, 3.2, epsilon: 0.2), [

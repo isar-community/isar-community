@@ -223,50 +223,50 @@ void main() {
     isarTest('.embedded() then .embedded()', () async {
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameStartsWith('embedded')),
-        ),
+              (q) => q.embeddedB((q) => q.nameStartsWith('embedded')),
+            ),
         [obj1, obj2, obj4, obj6],
       );
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameEqualTo('embedded a1 b1')),
-        ),
+              (q) => q.embeddedB((q) => q.nameEqualTo('embedded a1 b1')),
+            ),
         [obj1],
       );
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameEqualTo('embedded a2 b2')),
-        ),
+              (q) => q.embeddedB((q) => q.nameEqualTo('embedded a2 b2')),
+            ),
         [obj2],
       );
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameEqualTo('embedded a3 b3')),
-        ),
+              (q) => q.embeddedB((q) => q.nameEqualTo('embedded a3 b3')),
+            ),
         [],
       );
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameEqualTo('embedded a4 b4')),
-        ),
+              (q) => q.embeddedB((q) => q.nameEqualTo('embedded a4 b4')),
+            ),
         [obj4],
       );
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameEqualTo('embedded a5 b5')),
-        ),
+              (q) => q.embeddedB((q) => q.nameEqualTo('embedded a5 b5')),
+            ),
         [],
       );
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameEqualTo('embedded a6 b6')),
-        ),
+              (q) => q.embeddedB((q) => q.nameEqualTo('embedded a6 b6')),
+            ),
         [obj6],
       );
       await qEqualSet(
         isar.models.filter().embeddedA(
-          (q) => q.embeddedB((q) => q.nameEqualTo('non existing')),
-        ),
+              (q) => q.embeddedB((q) => q.nameEqualTo('non existing')),
+            ),
         [],
       );
     });

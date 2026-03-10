@@ -116,11 +116,11 @@ void main() {
     isarTest('Nested groups', () async {
       await qEqualSet(
         users.where().filter().group(
-          (QueryBuilder<UserModel, UserModel, QFilterCondition> q) => q
-              .nameEqualTo('Simon')
-              .or()
-              .group((q) => q.ageEqualTo(30).or().ageEqualTo(20)),
-        ),
+              (QueryBuilder<UserModel, UserModel, QFilterCondition> q) => q
+                  .nameEqualTo('Simon')
+                  .or()
+                  .group((q) => q.ageEqualTo(30).or().ageEqualTo(20)),
+            ),
         [
           UserModel.fill('Simon', 30, false),
           UserModel.fill('David', 20, false),

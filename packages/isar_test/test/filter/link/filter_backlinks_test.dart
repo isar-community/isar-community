@@ -159,8 +159,8 @@ void main() {
 
       await qEqualSet(
         isar.targetModels.filter().backlinks(
-          (q) => q.nameEqualTo('non existing'),
-        ),
+              (q) => q.nameEqualTo('non existing'),
+            ),
         [],
       );
 
@@ -303,29 +303,29 @@ void main() {
 
       await qEqualSet(
         isar.targetModels.filter().backlinksLengthBetween(
-          0,
-          3,
-          includeLower: false,
-        ),
+              0,
+              3,
+              includeLower: false,
+            ),
         [target1, target2, target3, target4],
       );
 
       await qEqualSet(
         isar.targetModels.filter().backlinksLengthBetween(
-          0,
-          3,
-          includeUpper: false,
-        ),
+              0,
+              3,
+              includeUpper: false,
+            ),
         [target2, target3, target4, target5, target6],
       );
 
       await qEqualSet(
         isar.targetModels.filter().backlinksLengthBetween(
-          0,
-          3,
-          includeLower: false,
-          includeUpper: false,
-        ),
+              0,
+              3,
+              includeLower: false,
+              includeUpper: false,
+            ),
         [target2, target3, target4],
       );
 

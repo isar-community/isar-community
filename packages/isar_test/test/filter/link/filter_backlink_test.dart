@@ -154,8 +154,8 @@ void main() {
 
       await qEqualSet(
         isar.targetModels.filter().backlink(
-          (q) => q.nameEqualTo('non existing'),
-        ),
+              (q) => q.nameEqualTo('non existing'),
+            ),
         [],
       );
 

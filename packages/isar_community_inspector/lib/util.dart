@@ -10,7 +10,7 @@ extension CollectionSchemaX on CollectionSchema<dynamic> {
   }
 
   List<PropertySchema> get idAndProperties => [
-    PropertySchema(id: 0, name: idName, type: IsarType.long),
-    ...properties.values,
-  ];
+        PropertySchema(id: 0, name: idName, type: IsarType.long),
+        ...properties.values,
+      ];
 }

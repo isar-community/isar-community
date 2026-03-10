@@ -303,29 +303,29 @@ void main() {
 
       await qEqualSet(
         isar.sourceModels.filter().linksLengthBetween(
-          0,
-          3,
-          includeLower: false,
-        ),
+              0,
+              3,
+              includeLower: false,
+            ),
         [source1, source2, source3, source4],
       );
 
       await qEqualSet(
         isar.sourceModels.filter().linksLengthBetween(
-          0,
-          3,
-          includeUpper: false,
-        ),
+              0,
+              3,
+              includeUpper: false,
+            ),
         [source1, source3, source4, source5, source6],
       );
 
       await qEqualSet(
         isar.sourceModels.filter().linksLengthBetween(
-          0,
-          3,
-          includeLower: false,
-          includeUpper: false,
-        ),
+              0,
+              3,
+              includeLower: false,
+              includeUpper: false,
+            ),
         [source1, source3, source4],
       );
 

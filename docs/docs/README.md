@@ -20,7 +20,7 @@ features:
   - title: 💃 Static typing
     details: Isar's queries are statically typed and compile-time checked. No need to worry about runtime errors. 
   - title: 📱 Multiplatform
-    details: iOS, Android, Desktop, and FULL WEB SUPPORT!
+    details: iOS, Android, Mac, Windows and Linux
   - title: ⏱ Asynchronous
     details: Parallel query operations & multi-isolate support out-of-the-box
   - title: 🦄 Open Source

@@ -105,11 +105,11 @@ void main() {
       );
       await qEqual(
         col.filter().listElementBetween(
-          null,
-          1.1,
-          includeLower: false,
-          includeUpper: false,
-        ),
+              null,
+              1.1,
+              includeLower: false,
+              includeUpper: false,
+            ),
         [obj3],
       );
       await qEqual(col.filter().listElementBetween(5, 10), []);

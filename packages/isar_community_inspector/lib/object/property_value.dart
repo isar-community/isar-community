@@ -21,18 +21,16 @@ class PropertyValue extends StatelessWidget {
     final value = this.value;
 
     if (enumMap != null) {
-      final enumName = enumMap!.entries
-          .firstWhere(
-            (e) => e.value == value,
-            orElse: () {
-              if (type == IsarType.byte || type == IsarType.byteList) {
-                return enumMap!.entries.first;
-              } else {
-                return const MapEntry('null', null);
-              }
-            },
-          )
-          .key;
+      final enumName = enumMap!.entries.firstWhere(
+        (e) => e.value == value,
+        orElse: () {
+          if (type == IsarType.byte || type == IsarType.byteList) {
+            return enumMap!.entries.first;
+          } else {
+            return const MapEntry('null', null);
+          }
+        },
+      ).key;
       return GestureDetector(
         onTapDown: onUpdate == null
             ? null
@@ -112,8 +110,8 @@ class PropertyValue extends StatelessWidget {
           text: value == null
               ? null
               : value == null
-              ? null
-              : '$value',
+                  ? null
+                  : '$value',
         );
         final numFocus = FocusNode();
         numFocus.addListener(() {
@@ -187,9 +185,8 @@ class PropertyValue extends StatelessWidget {
             final value = strController.text;
             String? strOrNull;
             if (value.startsWith('"') && value.endsWith('"')) {
-              strOrNull = value
-                  .substring(1, value.length - 1)
-                  .replaceAll('⤵', '\n');
+              strOrNull =
+                  value.substring(1, value.length - 1).replaceAll('⤵', '\n');
             }
             onUpdate?.call(strOrNull);
           }

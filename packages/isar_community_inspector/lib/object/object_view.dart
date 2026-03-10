@@ -20,7 +20,7 @@ class ObjectView extends StatelessWidget {
   final Map<String, Schema<dynamic>> schemas;
   final IsarObject object;
   final void Function(String collection, int? id, String path, dynamic value)
-  onUpdate;
+      onUpdate;
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +48,7 @@ class ObjectView extends StatelessWidget {
               property: property,
               value: object.getValue(property.name),
               isId: false,
-              isIndexed:
-                  schema is CollectionSchema &&
+              isIndexed: schema is CollectionSchema &&
                   schema.indexes.values.any(
                     (index) =>
                         index.properties.any((p) => p.name == property.name),
