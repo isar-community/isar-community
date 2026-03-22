@@ -19,7 +19,7 @@ platforms:
   windows:
 
 dependencies:
-  analyzer: ">=7.4.5 <9.0.0"
+  analyzer: ">=7.4.5 <11.0.0"
   build: ^4.0.0
   dart_style: ^3.0.1
   dartx: ^1.1.0
