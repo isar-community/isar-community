@@ -46,8 +46,8 @@ export default defineUserConfig({
     base: '/v3/',
     theme: defaultTheme({
         logo: "/isar.svg",
-        repo: "isar-community/isar",
-        docsRepo: "isar-community/isar",
+        repo: "isar-community/isar_community",
+        docsRepo: "isar-community/isar_community",
         docsDir: "docs/docs",
         contributors: true,
         locales: themeLocales,
@@ -104,7 +104,7 @@ export default defineUserConfig({
                 rel: "icon",
                 type: "image/png",
                 sizes: "256x256",
-                href: `/icon-256x256.png`,
+                href: `/v3/icon-256x256.png`,
             },
         ],
         [
@@ -113,7 +113,7 @@ export default defineUserConfig({
                 rel: "icon",
                 type: "image/png",
                 sizes: "512x512",
-                href: `/icon-512x512.png`,
+                href: `/v3/icon-512x512.png`,
             },
         ],
         [
