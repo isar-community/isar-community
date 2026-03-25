@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:dartx/dartx.dart';
 import 'package:isar_community/isar.dart';
-import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:xxh3/xxh3.dart';
 
-@visibleForTesting
+/// Visible for testing.
 int generateWebSafeId(int hash) {
   // JavaScript safe integer range: -(2^53 - 1) to (2^53 - 1)
   const maxSafeInteger = 9007199254740991;
