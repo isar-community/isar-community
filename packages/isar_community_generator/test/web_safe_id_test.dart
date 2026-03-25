@@ -133,8 +133,11 @@ void main() {
           );
           final result = info.id;
 
-          expect(result, equals(entry.value),
-              reason: 'collection=${entry.key}');
+          expect(
+            result,
+            equals(entry.value),
+            reason: 'collection=${entry.key}',
+          );
         }
       });
 
@@ -186,8 +189,9 @@ void main() {
           'Token',
         ];
 
-        final uniqueIds =
-            names.map((n) => generateWebSafeId(xxh3(utf8.encode(n)))).toSet();
+        final uniqueIds = names
+            .map((n) => generateWebSafeId(xxh3(utf8.encode(n))))
+            .toSet();
 
         expect(uniqueIds.length, equals(names.length));
       });
