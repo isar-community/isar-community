@@ -170,7 +170,8 @@ extension QueryLimit<OBJ, R> on QueryBuilder<OBJ, R, QLimit> {
 /// @nodoc
 @protected
 typedef QueryOption<OBJ, S, RS> = QueryBuilder<OBJ, OBJ, RS> Function(
-    QueryBuilder<OBJ, OBJ, S> q);
+  QueryBuilder<OBJ, OBJ, S> q,
+);
 
 /// Extension for QueryBuilders.
 extension QueryModifier<OBJ, S> on QueryBuilder<OBJ, OBJ, S> {

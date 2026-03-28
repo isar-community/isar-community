@@ -4,15 +4,16 @@ import 'package:isar_community_generator/src/object_info.dart';
 
 class WhereGenerator {
   WhereGenerator(this.object)
-      : objName = object.dartName,
-        id = object.idProperty;
+    : objName = object.dartName,
+      id = object.idProperty;
   final ObjectInfo object;
   final String objName;
   final ObjectProperty id;
   final existing = <String>{};
 
   String generate() {
-    var code = 'extension ${objName}QueryWhereSort on QueryBuilder<$objName, '
+    var code =
+        'extension ${objName}QueryWhereSort on QueryBuilder<$objName, '
         '$objName, QWhere> {';
 
     code += generateAnyId();
@@ -22,7 +23,8 @@ class WhereGenerator {
       }
     }
 
-    code += '''
+    code +=
+        '''
   }
 
   extension ${objName}QueryWhere on QueryBuilder<$objName, $objName, QWhereClause> {
@@ -128,13 +130,15 @@ class WhereGenerator {
   }
 
   String joinToValues(List<ObjectIndexProperty> properties) {
-    return properties.map((it) {
-      if (it.property.isarType.isList && it.type != IndexType.hash) {
-        return '${it.property.dartName}Element';
-      } else {
-        return paramName(it);
-      }
-    }).join(', ');
+    return properties
+        .map((it) {
+          if (it.property.isarType.isList && it.type != IndexType.hash) {
+            return '${it.property.dartName}Element';
+          } else {
+            return paramName(it);
+          }
+        })
+        .join(', ');
   }
 
   String generateAnyId() {

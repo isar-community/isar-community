@@ -1,14 +1,12 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:isar_community_inspector/connection_screen.dart';
+import 'package:web/web.dart' as web;
 
 void main() async {
   if (['chrome', 'firefox'].any(
-    (userAgent) => window.navigator.userAgent.toLowerCase().contains(userAgent),
+    (userAgent) =>
+        web.window.navigator.userAgent.toLowerCase().contains(userAgent),
   )) {
     runApp(DarkMode(notifier: DarkModeNotifier(), child: const App()));
   } else {

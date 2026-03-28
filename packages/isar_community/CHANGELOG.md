@@ -1,3 +1,25 @@
+## 3.3.2
+
+### Updates
+- Widened `analyzer` constraint from `>=7.4.5 <9.0.0` to `>=8.0.0 <11.0.0`
+- Widened `source_gen` constraint to `>=4.0.0 <5.0.0`
+- Widened `dart_style` constraint to `>=3.0.1 <4.0.0`
+- Bumped minimum Dart SDK to `>=3.9.0`
+
+### Fixes
+- Replaced deprecated `isSynthetic` with `nonSynthetic` in generator to support `analyzer` 10.x
+
+## 3.3.1
+
+### Updates
+- Migrated `source_gen` to `^4.0.1` and `build` to `^4.0.0`
+- Updated `very_good_analysis` to `^10.0.0`
+- Updated `test` to `^1.26.3`
+- Added `platforms` configuration to `isar_community`, `isar_community_flutter_libs`, and `isar_community_generator` pubspecs
+
+### Fixes
+- Fixed lint and formatting issues across the codebase
+
 ## 3.3.0
 
 ### Fixes

@@ -7,7 +7,8 @@ String generateQueryLinks(ObjectInfo oi) {
       'extension ${oi.dartName}QueryLinks on QueryBuilder<${oi.dartName}, '
       '${oi.dartName}, QFilterCondition> {';
   for (final link in oi.links) {
-    code += '''
+    code +=
+        '''
       QueryBuilder<${oi.dartName}, ${oi.dartName}, QAfterFilterCondition> ${link.dartName.decapitalize()}(FilterQuery<${link.targetCollectionDartName}> q) {
         return QueryBuilder.apply(this, (query) {
           return query.link(q, r'${link.isarName}');
@@ -15,7 +16,8 @@ String generateQueryLinks(ObjectInfo oi) {
       }''';
 
     if (link.isSingle) {
-      code += '''
+      code +=
+          '''
         QueryBuilder<${oi.dartName}, ${oi.dartName}, QAfterFilterCondition> ${link.dartName.decapitalize()}IsNull() {
           return QueryBuilder.apply(this, (query) {
             return query.linkLength(r'${link.isarName}', 0, true, 0, true);

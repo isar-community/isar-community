@@ -171,7 +171,7 @@ class ObjectIndex {
   final bool unique;
   final bool replace;
 
-  late final id = xxh3(utf8.encode(name));
+  late final int id = xxh3(utf8.encode(name));
 }
 
 class ObjectLink {

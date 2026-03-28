@@ -1,4 +1,4 @@
-// ignore_for_file: implementation_imports
+// ignore_for_file: implementation_imports, depend_on_referenced_packages
 
 import 'dart:async';
 import 'dart:io';
@@ -70,16 +70,19 @@ void _isarTest(
   test(
     testName,
     () async {
-      await runZoned(() async {
-        try {
-          await _prepareTest();
-          await body();
-          testCount++;
-        } catch (e) {
-          testErrors.add('$testName: $e');
-          rethrow;
-        }
-      }, zoneValues: {#syncTest: syncTest});
+      await runZoned(
+        () async {
+          try {
+            await _prepareTest();
+            await body();
+            testCount++;
+          } catch (e) {
+            testErrors.add('$testName: $e');
+            rethrow;
+          }
+        },
+        zoneValues: {#syncTest: syncTest},
+      );
     },
     timeout: timeout ?? const Timeout(Duration(minutes: 10)),
     skip: skip,

@@ -122,9 +122,8 @@ class Scores extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final latestVersion = ref.watch(latestVersionPod(package.name)).valueOrNull;
-    final preReleaseVersion = ref
-        .watch(preReleaseVersionPod(package.name))
-        .valueOrNull;
+    final preReleaseVersion =
+        ref.watch(preReleaseVersionPod(package.name)).valueOrNull;
 
     final widgets = <Widget>[
       if (package.likes != null)

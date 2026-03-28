@@ -91,7 +91,7 @@ class CollectionSchema<OBJ> extends Schema<OBJ> {
   final String version;
 
   /// @nodoc
-  void toCollection(void Function<OBJ>() callback) => callback<OBJ>();
+  void toCollection(void Function<T>() callback) => callback<OBJ>();
 
   /// @nodoc
   @pragma('vm:prefer-inline')
