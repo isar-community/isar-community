@@ -6,7 +6,6 @@ import 'dart:ffi';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart';
 import 'package:isar_community/isar.dart';
 import 'package:isar_community/src/native/bindings.dart';
 import 'package:isar_community/src/native/encode_string.dart';
@@ -560,7 +559,6 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   @override
   Stream<void> watchObjectLazy(Id id, {bool fireImmediately = false}) {
     isar.requireOpen();
-    final cObjPtr = malloc<CObject>();
 
     final port = ReceivePort();
     final handle = IC.isar_watch_object(
@@ -569,7 +567,6 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
       id,
       port.sendPort.nativePort,
     );
-    malloc.free(cObjPtr);
 
     final controller = StreamController<void>(
       onCancel: () {
