@@ -13,7 +13,8 @@ String generateSortBy(ObjectInfo oi) {
       continue;
     }
 
-    code += '''
+    code +=
+        '''
     QueryBuilder<${oi.dartName}, ${oi.dartName}, QAfterSortBy>sortBy${property.dartName.capitalize()}() {
       return QueryBuilder.apply(this, (query) {
         return query.addSortBy(r'${property.isarName}', Sort.asc);
@@ -37,7 +38,8 @@ String generateSortBy(ObjectInfo oi) {
       continue;
     }
 
-    code += '''
+    code +=
+        '''
     QueryBuilder<${oi.dartName}, ${oi.dartName}, QAfterSortBy>thenBy${property.dartName.capitalize()}() {
       return QueryBuilder.apply(this, (query) {
         return query.addSortBy(r'${property.isarName}', Sort.asc);

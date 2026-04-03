@@ -710,21 +710,24 @@ void main() {
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a1 b1 - 1')),
+                (q) => q.nameEqualTo('embedded a1 b1 - 1'),
+              ),
             ),
         [obj1],
       );
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a1 b1 - 2')),
+                (q) => q.nameEqualTo('embedded a1 b1 - 2'),
+              ),
             ),
         [obj1],
       );
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a1 b1 - 3')),
+                (q) => q.nameEqualTo('embedded a1 b1 - 3'),
+              ),
             ),
         [obj1],
       );
@@ -732,7 +735,8 @@ void main() {
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a3 b3 - 1')),
+                (q) => q.nameEqualTo('embedded a3 b3 - 1'),
+              ),
             ),
         [obj3],
       );
@@ -740,35 +744,40 @@ void main() {
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a5 b5 - 1')),
+                (q) => q.nameEqualTo('embedded a5 b5 - 1'),
+              ),
             ),
         [obj5],
       );
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a5 b5 - 2')),
+                (q) => q.nameEqualTo('embedded a5 b5 - 2'),
+              ),
             ),
         [obj5],
       );
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a5 b5 - 3')),
+                (q) => q.nameEqualTo('embedded a5 b5 - 3'),
+              ),
             ),
         [obj5],
       );
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a5 b5 - 4')),
+                (q) => q.nameEqualTo('embedded a5 b5 - 4'),
+              ),
             ),
         [obj5],
       );
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a5 b5 - 5')),
+                (q) => q.nameEqualTo('embedded a5 b5 - 5'),
+              ),
             ),
         [obj5],
       );
@@ -776,7 +785,8 @@ void main() {
       await qEqualSet(
         isar.models.filter().embeddedAsElement(
               (q) => q.embeddedBsElement(
-                  (q) => q.nameEqualTo('embedded a6 b6 - 1')),
+                (q) => q.nameEqualTo('embedded a6 b6 - 1'),
+              ),
             ),
         [obj6],
       );

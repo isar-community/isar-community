@@ -14,7 +14,7 @@ on:
 jobs:
   version:
     name: Version Display
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Setup Flutter
@@ -25,7 +25,7 @@ jobs:
 
   format:
     name: Check formatting
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Setup Flutter
@@ -49,7 +49,7 @@ jobs:
 
   lint:
     name: Check lints
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Setup Flutter
@@ -78,7 +78,7 @@ jobs:
     name: Dart Test
     strategy:
       matrix:
-        os: [macos-14, macos-13, ubuntu-22.04, windows-2022]
+        os: [macos-15-intel, macos-15, macos-14, ubuntu-24.04, windows-2022]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -101,7 +101,7 @@ jobs:
 
   valgrind:
     name: Valgrind
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ false }}
     steps:
       - uses: actions/checkout@v4
@@ -132,7 +132,7 @@ jobs:
 
   coverage:
     name: Code Coverage
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -169,7 +169,7 @@ jobs:
 
   test_generator:
     name: Generator Test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -183,13 +183,17 @@ jobs:
 
   integration_test_ios:
     name: Integration Test iOS
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - name: Start simulator
-        uses: futureware-tech/simulator-action@v4
+        uses: futureware-tech/simulator-action@v5
         with:
-          model: iPhone 15
+          model: 'iPhone 16'
+          os_version: '>= 26.0'
+          wait_for_boot: true
+          erase_before_boot: true
+          boot_timeout_seconds: 360
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ env.FLUTTER_OVERRIDE || vars.FLUTTER_VERSION }}
@@ -207,7 +211,7 @@ jobs:
 
   integration_test_android:
     name: Integration Test Android
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v3
@@ -254,7 +258,7 @@ jobs:
 
   integration_test_macos:
     name: Integration Test macOS
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -280,7 +284,7 @@ jobs:
 
   integration_test_linux:
     name: Integration Test Linux
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -334,7 +338,7 @@ jobs:
         working-directory: packages/isar_test
 
   # drive_chrome:
-  #   runs-on: ubuntu-22.04
+  #   runs-on: ubuntu-24.04
   #   if: ${{ false }}
   #   steps:
   #     - uses: actions/checkout@v4
@@ -355,7 +359,7 @@ jobs:
   #       working-directory: packages/isar_test
 
   # drive_safari:
-  #   runs-on: macos-14
+  #   runs-on: macos-15
   #   if: ${{ false }}
   #   steps:
   #     - uses: actions/checkout@v4
@@ -376,7 +380,7 @@ jobs:
   #       working-directory: packages/isar_test
 
   # drive_firefox:
-  #   runs-on: ubuntu-22.04
+  #   runs-on: ubuntu-24.04
   #   if: ${{ false }}
   #   steps:
   #     - uses: actions/checkout@v4

@@ -17,15 +17,27 @@ const AssetSchema = CollectionSchema(
   name: r'Asset',
   id: -2933289051367723566,
   properties: {
-    r'content': PropertySchema(id: 0, name: r'content', type: IsarType.string),
+    r'content': PropertySchema(
+      id: 0,
+      name: r'content',
+      type: IsarType.string,
+    ),
     r'kind': PropertySchema(
       id: 1,
       name: r'kind',
       type: IsarType.byte,
       enumMap: _AssetkindEnumValueMap,
     ),
-    r'package': PropertySchema(id: 2, name: r'package', type: IsarType.string),
-    r'version': PropertySchema(id: 3, name: r'version', type: IsarType.string),
+    r'package': PropertySchema(
+      id: 2,
+      name: r'package',
+      type: IsarType.string,
+    ),
+    r'version': PropertySchema(
+      id: 3,
+      name: r'version',
+      type: IsarType.string,
+    )
   },
   estimateSize: _assetEstimateSize,
   serialize: _assetSerialize,
@@ -53,16 +65,16 @@ const AssetSchema = CollectionSchema(
           name: r'kind',
           type: IndexType.value,
           caseSensitive: false,
-        ),
+        )
       ],
-    ),
+    )
   },
   links: {},
   embeddedSchemas: {},
   getId: _assetGetId,
   getLinks: _assetGetLinks,
   attach: _assetAttach,
-  version: '3.2.0-dev.2',
+  version: '3.3.2',
 );
 
 int _assetEstimateSize(
@@ -97,8 +109,7 @@ Asset _assetDeserialize(
 ) {
   final object = Asset(
     content: reader.readString(offsets[0]),
-    kind:
-        _AssetkindValueEnumMap[reader.readByteOrNull(offsets[1])] ??
+    kind: _AssetkindValueEnumMap[reader.readByteOrNull(offsets[1])] ??
         AssetKind.readme,
     package: reader.readString(offsets[2]),
     version: reader.readString(offsets[3]),
@@ -118,8 +129,7 @@ P _assetDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 1:
       return (_AssetkindValueEnumMap[reader.readByteOrNull(offset)] ??
-              AssetKind.readme)
-          as P;
+          AssetKind.readme) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
@@ -129,8 +139,14 @@ P _assetDeserializeProp<P>(
   }
 }
 
-const _AssetkindEnumValueMap = {'readme': 0, 'changelog': 1};
-const _AssetkindValueEnumMap = {0: AssetKind.readme, 1: AssetKind.changelog};
+const _AssetkindEnumValueMap = {
+  'readme': 0,
+  'changelog': 1,
+};
+const _AssetkindValueEnumMap = {
+  0: AssetKind.readme,
+  1: AssetKind.changelog,
+};
 
 Id _assetGetId(Asset object) {
   return object.id;
@@ -146,47 +162,30 @@ void _assetAttach(IsarCollection<dynamic> col, Id id, Asset object) {
 
 extension AssetByIndex on IsarCollection<Asset> {
   Future<Asset?> getByPackageVersionKind(
-    String package,
-    String version,
-    AssetKind kind,
-  ) {
+      String package, String version, AssetKind kind) {
     return getByIndex(r'package_version_kind', [package, version, kind]);
   }
 
   Asset? getByPackageVersionKindSync(
-    String package,
-    String version,
-    AssetKind kind,
-  ) {
+      String package, String version, AssetKind kind) {
     return getByIndexSync(r'package_version_kind', [package, version, kind]);
   }
 
   Future<bool> deleteByPackageVersionKind(
-    String package,
-    String version,
-    AssetKind kind,
-  ) {
+      String package, String version, AssetKind kind) {
     return deleteByIndex(r'package_version_kind', [package, version, kind]);
   }
 
   bool deleteByPackageVersionKindSync(
-    String package,
-    String version,
-    AssetKind kind,
-  ) {
+      String package, String version, AssetKind kind) {
     return deleteByIndexSync(r'package_version_kind', [package, version, kind]);
   }
 
-  Future<List<Asset?>> getAllByPackageVersionKind(
-    List<String> packageValues,
-    List<String> versionValues,
-    List<AssetKind> kindValues,
-  ) {
+  Future<List<Asset?>> getAllByPackageVersionKind(List<String> packageValues,
+      List<String> versionValues, List<AssetKind> kindValues) {
     final len = packageValues.length;
-    assert(
-      versionValues.length == len && kindValues.length == len,
-      'All index values must have the same length',
-    );
+    assert(versionValues.length == len && kindValues.length == len,
+        'All index values must have the same length');
     final values = <List<dynamic>>[];
     for (var i = 0; i < len; i++) {
       values.add([packageValues[i], versionValues[i], kindValues[i]]);
@@ -195,16 +194,11 @@ extension AssetByIndex on IsarCollection<Asset> {
     return getAllByIndex(r'package_version_kind', values);
   }
 
-  List<Asset?> getAllByPackageVersionKindSync(
-    List<String> packageValues,
-    List<String> versionValues,
-    List<AssetKind> kindValues,
-  ) {
+  List<Asset?> getAllByPackageVersionKindSync(List<String> packageValues,
+      List<String> versionValues, List<AssetKind> kindValues) {
     final len = packageValues.length;
-    assert(
-      versionValues.length == len && kindValues.length == len,
-      'All index values must have the same length',
-    );
+    assert(versionValues.length == len && kindValues.length == len,
+        'All index values must have the same length');
     final values = <List<dynamic>>[];
     for (var i = 0; i < len; i++) {
       values.add([packageValues[i], versionValues[i], kindValues[i]]);
@@ -213,16 +207,11 @@ extension AssetByIndex on IsarCollection<Asset> {
     return getAllByIndexSync(r'package_version_kind', values);
   }
 
-  Future<int> deleteAllByPackageVersionKind(
-    List<String> packageValues,
-    List<String> versionValues,
-    List<AssetKind> kindValues,
-  ) {
+  Future<int> deleteAllByPackageVersionKind(List<String> packageValues,
+      List<String> versionValues, List<AssetKind> kindValues) {
     final len = packageValues.length;
-    assert(
-      versionValues.length == len && kindValues.length == len,
-      'All index values must have the same length',
-    );
+    assert(versionValues.length == len && kindValues.length == len,
+        'All index values must have the same length');
     final values = <List<dynamic>>[];
     for (var i = 0; i < len; i++) {
       values.add([packageValues[i], versionValues[i], kindValues[i]]);
@@ -231,16 +220,11 @@ extension AssetByIndex on IsarCollection<Asset> {
     return deleteAllByIndex(r'package_version_kind', values);
   }
 
-  int deleteAllByPackageVersionKindSync(
-    List<String> packageValues,
-    List<String> versionValues,
-    List<AssetKind> kindValues,
-  ) {
+  int deleteAllByPackageVersionKindSync(List<String> packageValues,
+      List<String> versionValues, List<AssetKind> kindValues) {
     final len = packageValues.length;
-    assert(
-      versionValues.length == len && kindValues.length == len,
-      'All index values must have the same length',
-    );
+    assert(versionValues.length == len && kindValues.length == len,
+        'All index values must have the same length');
     final values = <List<dynamic>>[];
     for (var i = 0; i < len; i++) {
       values.add([packageValues[i], versionValues[i], kindValues[i]]);
@@ -254,26 +238,18 @@ extension AssetByIndex on IsarCollection<Asset> {
   }
 
   Id putByPackageVersionKindSync(Asset object, {bool saveLinks = true}) {
-    return putByIndexSync(
-      r'package_version_kind',
-      object,
-      saveLinks: saveLinks,
-    );
+    return putByIndexSync(r'package_version_kind', object,
+        saveLinks: saveLinks);
   }
 
   Future<List<Id>> putAllByPackageVersionKind(List<Asset> objects) {
     return putAllByIndex(r'package_version_kind', objects);
   }
 
-  List<Id> putAllByPackageVersionKindSync(
-    List<Asset> objects, {
-    bool saveLinks = true,
-  }) {
-    return putAllByIndexSync(
-      r'package_version_kind',
-      objects,
-      saveLinks: saveLinks,
-    );
+  List<Id> putAllByPackageVersionKindSync(List<Asset> objects,
+      {bool saveLinks = true}) {
+    return putAllByIndexSync(r'package_version_kind', objects,
+        saveLinks: saveLinks);
   }
 }
 
@@ -288,7 +264,10 @@ extension AssetQueryWhereSort on QueryBuilder<Asset, Asset, QWhere> {
 extension AssetQueryWhere on QueryBuilder<Asset, Asset, QWhereClause> {
   QueryBuilder<Asset, Asset, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
     });
   }
 
@@ -314,10 +293,8 @@ extension AssetQueryWhere on QueryBuilder<Asset, Asset, QWhereClause> {
     });
   }
 
-  QueryBuilder<Asset, Asset, QAfterWhereClause> idGreaterThan(
-    Id id, {
-    bool include = false,
-  }) {
+  QueryBuilder<Asset, Asset, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -325,10 +302,8 @@ extension AssetQueryWhere on QueryBuilder<Asset, Asset, QWhereClause> {
     });
   }
 
-  QueryBuilder<Asset, Asset, QAfterWhereClause> idLessThan(
-    Id id, {
-    bool include = false,
-  }) {
+  QueryBuilder<Asset, Asset, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -343,233 +318,187 @@ extension AssetQueryWhere on QueryBuilder<Asset, Asset, QWhereClause> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.between(
-          lower: lowerId,
-          includeLower: includeLower,
-          upper: upperId,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause> packageEqualToAnyVersionKind(
-    String package,
-  ) {
+      String package) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(
-          indexName: r'package_version_kind',
-          value: [package],
-        ),
-      );
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'package_version_kind',
+        value: [package],
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause> packageNotEqualToAnyVersionKind(
-    String package,
-  ) {
+      String package) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [],
-                upper: [package],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package],
-                includeLower: false,
-                upper: [],
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [],
+              upper: [package],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package],
+              includeLower: false,
+              upper: [],
+            ));
       } else {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package],
-                includeLower: false,
-                upper: [],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [],
-                upper: [package],
-                includeUpper: false,
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [],
+              upper: [package],
+              includeUpper: false,
+            ));
       }
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause> packageVersionEqualToAnyKind(
-    String package,
-    String version,
-  ) {
+      String package, String version) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(
-          indexName: r'package_version_kind',
-          value: [package, version],
-        ),
-      );
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'package_version_kind',
+        value: [package, version],
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause>
-  packageEqualToVersionNotEqualToAnyKind(String package, String version) {
+      packageEqualToVersionNotEqualToAnyKind(String package, String version) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package],
-                upper: [package, version],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package, version],
-                includeLower: false,
-                upper: [package],
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package],
+              upper: [package, version],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package, version],
+              includeLower: false,
+              upper: [package],
+            ));
       } else {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package, version],
-                includeLower: false,
-                upper: [package],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package],
-                upper: [package, version],
-                includeUpper: false,
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package, version],
+              includeLower: false,
+              upper: [package],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package],
+              upper: [package, version],
+              includeUpper: false,
+            ));
       }
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause> packageVersionKindEqualTo(
-    String package,
-    String version,
-    AssetKind kind,
-  ) {
+      String package, String version, AssetKind kind) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(
-          indexName: r'package_version_kind',
-          value: [package, version, kind],
-        ),
-      );
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'package_version_kind',
+        value: [package, version, kind],
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause>
-  packageVersionEqualToKindNotEqualTo(
-    String package,
-    String version,
-    AssetKind kind,
-  ) {
+      packageVersionEqualToKindNotEqualTo(
+          String package, String version, AssetKind kind) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package, version],
-                upper: [package, version, kind],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package, version, kind],
-                includeLower: false,
-                upper: [package, version],
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package, version],
+              upper: [package, version, kind],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package, version, kind],
+              includeLower: false,
+              upper: [package, version],
+            ));
       } else {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package, version, kind],
-                includeLower: false,
-                upper: [package, version],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'package_version_kind',
-                lower: [package, version],
-                upper: [package, version, kind],
-                includeUpper: false,
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package, version, kind],
+              includeLower: false,
+              upper: [package, version],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'package_version_kind',
+              lower: [package, version],
+              upper: [package, version, kind],
+              includeUpper: false,
+            ));
       }
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause>
-  packageVersionEqualToKindGreaterThan(
+      packageVersionEqualToKindGreaterThan(
     String package,
     String version,
     AssetKind kind, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'package_version_kind',
-          lower: [package, version, kind],
-          includeLower: include,
-          upper: [package, version],
-        ),
-      );
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'package_version_kind',
+        lower: [package, version, kind],
+        includeLower: include,
+        upper: [package, version],
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause>
-  packageVersionEqualToKindLessThan(
+      packageVersionEqualToKindLessThan(
     String package,
     String version,
     AssetKind kind, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'package_version_kind',
-          lower: [package, version],
-          upper: [package, version, kind],
-          includeUpper: include,
-        ),
-      );
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'package_version_kind',
+        lower: [package, version],
+        upper: [package, version, kind],
+        includeUpper: include,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterWhereClause>
-  packageVersionEqualToKindBetween(
+      packageVersionEqualToKindBetween(
     String package,
     String version,
     AssetKind lowerKind,
@@ -578,15 +507,13 @@ extension AssetQueryWhere on QueryBuilder<Asset, Asset, QWhereClause> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.between(
-          indexName: r'package_version_kind',
-          lower: [package, version, lowerKind],
-          includeLower: includeLower,
-          upper: [package, version, upperKind],
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'package_version_kind',
+        lower: [package, version, lowerKind],
+        includeLower: includeLower,
+        upper: [package, version, upperKind],
+        includeUpper: includeUpper,
+      ));
     });
   }
 }
@@ -597,13 +524,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'content',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'content',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -613,14 +538,12 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'content',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'content',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -630,14 +553,12 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'content',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'content',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -649,16 +570,14 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'content',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'content',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -667,13 +586,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'content',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'content',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -682,67 +599,62 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'content',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'content',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> contentContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'content',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'content',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> contentMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'content',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'content',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> contentIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'content', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'content',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> contentIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'content', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'content',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'id', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -751,13 +663,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -766,13 +676,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -783,25 +691,23 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'id',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> kindEqualTo(
-    AssetKind value,
-  ) {
+      AssetKind value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'kind', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'kind',
+        value: value,
+      ));
     });
   }
 
@@ -810,13 +716,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'kind',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'kind',
+        value: value,
+      ));
     });
   }
 
@@ -825,13 +729,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'kind',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'kind',
+        value: value,
+      ));
     });
   }
 
@@ -842,15 +744,13 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'kind',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'kind',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
@@ -859,13 +759,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'package',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'package',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -875,14 +773,12 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'package',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'package',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -892,14 +788,12 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'package',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'package',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -911,16 +805,14 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'package',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'package',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -929,13 +821,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'package',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'package',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -944,59 +834,53 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'package',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'package',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> packageContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'package',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'package',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> packageMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'package',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'package',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> packageIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'package', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'package',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> packageIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'package', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'package',
+        value: '',
+      ));
     });
   }
 
@@ -1005,13 +889,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'version',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'version',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1021,14 +903,12 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'version',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'version',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1038,14 +918,12 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'version',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'version',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1057,16 +935,14 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'version',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'version',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1075,13 +951,11 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'version',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'version',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1090,59 +964,53 @@ extension AssetQueryFilter on QueryBuilder<Asset, Asset, QFilterCondition> {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'version',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'version',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> versionContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'version',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'version',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> versionMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'version',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'version',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> versionIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'version', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'version',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<Asset, Asset, QAfterFilterCondition> versionIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'version', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'version',
+        value: '',
+      ));
     });
   }
 }
@@ -1264,9 +1132,8 @@ extension AssetQuerySortThenBy on QueryBuilder<Asset, Asset, QSortThenBy> {
 }
 
 extension AssetQueryWhereDistinct on QueryBuilder<Asset, Asset, QDistinct> {
-  QueryBuilder<Asset, Asset, QDistinct> distinctByContent({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<Asset, Asset, QDistinct> distinctByContent(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'content', caseSensitive: caseSensitive);
     });
@@ -1278,17 +1145,15 @@ extension AssetQueryWhereDistinct on QueryBuilder<Asset, Asset, QDistinct> {
     });
   }
 
-  QueryBuilder<Asset, Asset, QDistinct> distinctByPackage({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<Asset, Asset, QDistinct> distinctByPackage(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'package', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Asset, Asset, QDistinct> distinctByVersion({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<Asset, Asset, QDistinct> distinctByVersion(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'version', caseSensitive: caseSensitive);
     });

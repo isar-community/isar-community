@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, deprecated_member_use
 
 import 'package:isar_community/isar.dart';
 import 'package:isar_community/src/web/isar_reader_impl.dart';

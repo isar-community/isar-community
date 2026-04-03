@@ -115,9 +115,8 @@ class SearchResult extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final package = ref
-        .watch(freshPackagePod(PackageNameVersion(name)))
-        .valueOrNull;
+    final package =
+        ref.watch(freshPackagePod(PackageNameVersion(name))).valueOrNull;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

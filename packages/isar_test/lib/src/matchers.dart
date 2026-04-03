@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'package:isar_community/isar.dart';
 import 'package:isar_test/src/sync_async_helper.dart';
 import 'package:test/test.dart';
@@ -73,10 +75,13 @@ Matcher throwsIsarError([String? contains]) {
 
 Matcher get throwsAssertionError {
   var matcher = anything;
-  assert(() {
-    matcher = throwsA(isA<AssertionError>());
-    return true;
-  }(), 'only in debug mode');
+  assert(
+    () {
+      matcher = throwsA(isA<AssertionError>());
+      return true;
+    }(),
+    'only in debug mode',
+  );
   return matcher;
 }
 

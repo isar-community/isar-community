@@ -66,7 +66,8 @@ String generateAllByIndex(ObjectInfo oi, ObjectIndex index) {
         .sublist(1)
         .map((i) => '${valsName(i.property)}.length == len')
         .join('&&');
-    createValues = '''
+    createValues =
+        '''
       final len = ${valsName(props.first.property)}.length;
       assert($lenAssert, 'All index values must have the same length');
       final values = <List<dynamic>>[];

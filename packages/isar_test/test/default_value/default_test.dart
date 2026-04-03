@@ -144,9 +144,12 @@ void main() {
       final isarName = isar1.name;
       await isar1.close();
 
-      final isar2 = await openTempIsar([
-        DefaultListModelSchema,
-      ], name: isarName);
+      final isar2 = await openTempIsar(
+        [
+          DefaultListModelSchema,
+        ],
+        name: isarName,
+      );
       final obj = (await isar2.defaultListModels.tGet(0))!;
       expect(obj.boolValue, [true, false]);
       expect(obj.byteValue, [1, 3]);
@@ -165,9 +168,12 @@ void main() {
       final isarName = isar1.name;
       await isar1.close();
 
-      final isar2 = await openTempIsar([
-        DefaultListModelSchema,
-      ], name: isarName);
+      final isar2 = await openTempIsar(
+        [
+          DefaultListModelSchema,
+        ],
+        name: isarName,
+      );
       expect(
         await isar2.defaultListModels.where().boolValueProperty().tFindFirst(),
         [true, false],
