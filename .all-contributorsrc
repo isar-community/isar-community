@@ -200,6 +200,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "westy92",
+      "name": "Seth Westphal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/290167?v=4",
+      "profile": "https://github.com/westy92",
+      "contributions": [
+        "maintenance"
+      ]
     }
   ],
   "contributorTemplate": "<a href=\"https://github.com/<%= contributor.login %>\"><img src=\"<%= contributor.avatar_url %>\" width=\"<%= options.imageSize %>px;\" alt=\"\"/><br /><sub><b><%= contributor.name %></b></sub></a>",
