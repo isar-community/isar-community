@@ -86,8 +86,11 @@ class ConnectClient {
     return response.json?['result'] as T;
   }
 
-  Future<List<CollectionSchema<dynamic>>> getSchema() async {
-    final schema = await _call<List<dynamic>>(ConnectAction.getSchema);
+  Future<List<CollectionSchema<dynamic>>> getSchema(String instance) async {
+    final schema = await _call<List<dynamic>>(
+      ConnectAction.getSchema,
+      args: {'instance': instance},
+    );
     return schema
         .map(
           (e) => CollectionSchema<dynamic>.fromJson(e as Map<String, dynamic>),

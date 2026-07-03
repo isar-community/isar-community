@@ -61,26 +61,37 @@ class _SchemaLoader extends StatefulWidget {
 
 class _SchemaLoaderState extends State<_SchemaLoader> {
   late Future<List<String>> instancesFuture;
-  late Future<List<CollectionSchema<dynamic>>> collectionsFuture;
+  late Future<Map<String, List<CollectionSchema<dynamic>>>> schemasFuture;
   late StreamSubscription<void> _instancesSubscription;
 
   @override
   void initState() {
-    instancesFuture = widget.client.listInstances();
-    collectionsFuture = widget.client.getSchema();
-    _instancesSubscription = widget.client.instancesChanged.listen((event) {
-      setState(() {
-        instancesFuture = widget.client.listInstances();
-      });
-    });
     super.initState();
+    _loadData();
+    _instancesSubscription = widget.client.instancesChanged.listen((event) {
+      if (mounted) {
+        setState(() {
+          _loadData();
+        });
+      }
+    });
+  }
+
+  void _loadData() {
+    instancesFuture = widget.client.listInstances();
+    schemasFuture = instancesFuture.then((instances) async {
+      final map = <String, List<CollectionSchema<dynamic>>>{};
+      for (final instance in instances) {
+        map[instance] = await widget.client.getSchema(instance);
+      }
+      return map;
+    });
   }
 
   @override
   void didUpdateWidget(covariant _SchemaLoader oldWidget) {
-    instancesFuture = widget.client.listInstances();
-    collectionsFuture = widget.client.getSchema();
     super.didUpdateWidget(oldWidget);
+    _loadData();
   }
 
   @override
@@ -92,13 +103,15 @@ class _SchemaLoaderState extends State<_SchemaLoader> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
-      future: Future.wait([instancesFuture, collectionsFuture]),
+      future: Future.wait([instancesFuture, schemasFuture]),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ConnectedLayout(
             client: widget.client,
             instances: snapshot.data![0] as List<String>,
-            collections: snapshot.data![1] as List<CollectionSchema<dynamic>>,
+            schemasMap:
+                snapshot.data![1]
+                    as Map<String, List<CollectionSchema<dynamic>>>,
           );
         } else if (snapshot.hasError) {
           return const ErrorScreen();
