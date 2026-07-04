@@ -81,9 +81,9 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   @override
   Future<List<Id>> putAll(
     List<OBJ> objects, {
-    bool saveLinks = true,
+    bool saveLinks = false,
   }) {
-    return putAllByIndex(null, objects);
+    return putAllByIndex(null, objects, saveLinks: saveLinks);
   }
 
   @override
@@ -94,7 +94,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   Future<List<Id>> putAllByIndex(
     String? indexName,
     List<OBJ> objects, {
-    bool saveLinks = true,
+    bool saveLinks = false,
   }) {
     if (saveLinks) {
       throw UnsupportedError('Saving links is not supported on the web.');

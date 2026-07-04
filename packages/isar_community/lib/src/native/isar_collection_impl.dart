@@ -274,7 +274,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   @override
   Future<List<int>> putAll(
     List<OBJ> objects, {
-    bool saveLinks = true,
+    bool saveLinks = false,
   }) {
     return putAllByIndex(null, objects, saveLinks: saveLinks);
   }
@@ -288,7 +288,7 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   Future<List<int>> putAllByIndex(
     String? indexName,
     List<OBJ> objects, {
-    bool saveLinks = true,
+    bool saveLinks = false,
   }) {
     final indexId = indexName != null ? schema.index(indexName).id : null;
 

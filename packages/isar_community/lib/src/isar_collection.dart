@@ -79,7 +79,7 @@ abstract class IsarCollection<OBJ> {
   /// If the object has an non-final id property, it will be set to the assigned
   /// id. Otherwise you should use the returned id to update the object.
   /// {@endtemplate}
-  Future<Id> put(OBJ object, {bool saveLinks = true}) {
+  Future<Id> put(OBJ object, {bool saveLinks = false}) {
     return putAll([object], saveLinks: saveLinks)
         .then((List<Id> ids) => ids[0]);
   }
@@ -97,7 +97,7 @@ abstract class IsarCollection<OBJ> {
   /// assigned id. Otherwise you should use the returned ids to update the
   /// objects.
   /// {@endtemplate}
-  Future<List<Id>> putAll(List<OBJ> objects, {bool saveLinks = true});
+  Future<List<Id>> putAll(List<OBJ> objects, {bool saveLinks = false});
 
   /// {@macro col_put_all}
   List<Id> putAllSync(List<OBJ> objects, {bool saveLinks = true});
