@@ -46,8 +46,8 @@ export default defineUserConfig({
     base: '/v3/',
     theme: defaultTheme({
         logo: "/isar.svg",
-        repo: "isar-community/isar",
-        docsRepo: "isar-community/isar",
+        repo: "isar-community/isar-community",
+        docsRepo: "isar-community/isar-community",
         docsDir: "docs/docs",
         contributors: true,
         locales: themeLocales,

@@ -18,7 +18,7 @@ class QueryImpl<T> extends Query<T> implements Finalizable {
   static final _finalizer = NativeFinalizer(isarQueryFree);
 
   QueryImpl(this.col, this.queryPtr, this.deserialize, this.propertyId) {
-     _finalizer.attach(this, queryPtr.cast());
+    _finalizer.attach(this, queryPtr.cast());
   }
   static const int maxLimit = 4294967295;
 
