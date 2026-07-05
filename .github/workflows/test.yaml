@@ -1,7 +1,7 @@
 name: Dart CI
 
 env:
-  FLUTTER_OVERRIDE: "3.35.1"
+  FLUTTER_OVERRIDE: "3.44.0"
 
 on:
   push:
@@ -206,7 +206,7 @@ jobs:
       - name: Prepare Tests
         run: sh tool/prepare_tests.sh
       - name: Run Flutter Integration tests
-        run: flutter test integration_test/integration_test.dart --dart-define STRESS=true
+        run: flutter test -d 'iPhone 16' integration_test/integration_test.dart --dart-define STRESS=true
         working-directory: packages/isar_test
 
   integration_test_android:
@@ -273,14 +273,100 @@ jobs:
         run: |
           bash tool/build_macos.sh
           install_name_tool -id @rpath/libisar.dylib libisar_macos.dylib
-          mv libisar_macos.dylib packages/isar_community_flutter_libs/macos/libisar.dylib
+          cp libisar_macos.dylib packages/isar_community_flutter_libs/macos/libisar.dylib
+          cp libisar_macos.dylib libisar.dylib
+          xcodebuild -create-xcframework \
+            -library libisar.dylib \
+            -output packages/isar_community_flutter_libs/macos/isar.xcframework
       - name: Prepare Tests
         run: sh tool/prepare_tests.sh
       - name: Run Flutter Driver tests
         run: |
           flutter config --enable-macos-desktop
-          flutter test -d macos integration_test/integration_test.dart --dart-define STRESS=true
+          flutter config --no-enable-swift-package-manager
+          flutter test -d macos integration_test/integration_test.dart --dart-define STRESS=true "--dart-define=ISAR_TEST_TMP=${{ github.workspace }}/packages/isar_test/.dart_tool/test/tmp"
         working-directory: packages/isar_test
+      - name: Diagnose on failure
+        if: failure()
+        run: |
+          APP="packages/isar_test/build/macos/Build/Products/Debug/isar_test.app"
+          BIN="${APP}/Contents/MacOS/isar_test"
+          echo "=== /tmp/isar_diag.txt ===" && cat /tmp/isar_diag.txt 2>/dev/null || echo "file not found"
+          echo "=== Frameworks dir ===" && ls -la "${APP}/Contents/Frameworks/" 2>&1
+          echo "=== otool isar deps ===" && otool -L "${BIN}" 2>&1 | grep -i isar || echo "none"
+          echo "=== entitlements ===" && codesign -d --entitlements - "${BIN}" 2>&1 | grep -E "sandbox|true|false" || echo "none"
+          echo "=== workspace path test ===" && ls "${{ github.workspace }}/packages/isar_test/.dart_tool/" 2>&1 || echo "not found"
+
+  integration_test_ios_spm:
+    name: Integration Test iOS (SwiftPM)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_OVERRIDE || vars.FLUTTER_VERSION }}
+      - name: Prepare Build
+        uses: ./.github/actions/prepare-build
+      - name: Build Isar Core
+        run: |
+          bash tool/build_ios.sh
+          unzip isar_ios.xcframework.zip -d packages/isar_community_flutter_libs/ios
+      - name: Prepare Tests
+        run: sh tool/prepare_tests.sh
+      - name: Enable Swift Package Manager
+        run: flutter config --enable-swift-package-manager
+      - name: Start simulator
+        uses: futureware-tech/simulator-action@v5
+        with:
+          model: 'iPhone 16'
+          os_version: '>= 26.0'
+          wait_for_boot: true
+          erase_before_boot: true
+          boot_timeout_seconds: 360
+      - name: Run Flutter Integration tests
+        run: flutter test -d 'iPhone 16' integration_test/integration_test.dart --dart-define STRESS=true
+        working-directory: packages/isar_test
+
+  integration_test_macos_spm:
+    name: Integration Test macOS (SwiftPM)
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_OVERRIDE || vars.FLUTTER_VERSION }}
+      - name: Prepare Build
+        uses: ./.github/actions/prepare-build
+      - name: Display Rust version
+        run: rustc --version && cargo --version
+      - name: Build Isar Core
+        run: |
+          bash tool/build_macos.sh
+          install_name_tool -id @rpath/libisar.dylib libisar_macos.dylib
+          cp libisar_macos.dylib packages/isar_community_flutter_libs/macos/libisar.dylib
+          cp libisar_macos.dylib libisar.dylib
+          xcodebuild -create-xcframework \
+            -library libisar.dylib \
+            -output packages/isar_community_flutter_libs/macos/isar.xcframework
+      - name: Prepare Tests
+        run: sh tool/prepare_tests.sh
+      - name: Enable Swift Package Manager
+        run: flutter config --enable-swift-package-manager
+      - name: Run Flutter Driver tests
+        run: |
+          flutter config --enable-macos-desktop
+          flutter test -d macos integration_test/integration_test.dart --dart-define STRESS=true "--dart-define=ISAR_TEST_TMP=${{ github.workspace }}/packages/isar_test/.dart_tool/test/tmp"
+        working-directory: packages/isar_test
+      - name: Diagnose on failure
+        if: failure()
+        run: |
+          APP="packages/isar_test/build/macos/Build/Products/Debug/isar_test.app"
+          BIN="${APP}/Contents/MacOS/isar_test"
+          echo "=== /tmp/isar_diag.txt ===" && cat /tmp/isar_diag.txt 2>/dev/null || echo "file not found"
+          echo "=== Frameworks dir ===" && ls -la "${APP}/Contents/Frameworks/" 2>&1
+          echo "=== otool isar deps ===" && otool -L "${BIN}" 2>&1 | grep -i isar || echo "none"
+          echo "=== entitlements ===" && codesign -d --entitlements - "${BIN}" 2>&1 | grep -E "sandbox|true|false" || echo "none"
+          echo "=== workspace path test ===" && ls "${{ github.workspace }}/packages/isar_test/.dart_tool/" 2>&1 || echo "not found"
 
   integration_test_linux:
     name: Integration Test Linux

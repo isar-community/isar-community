@@ -46,7 +46,6 @@ abstract class IsarCollection<OBJ> {
   ///
   /// If possible, you should use the generated type-safe methods instead.
   /// {@endtemplate}
-  @experimental
   Future<OBJ?> getByIndex(String indexName, IndexKey key) {
     return getAllByIndex(indexName, [
       key,
@@ -54,7 +53,6 @@ abstract class IsarCollection<OBJ> {
   }
 
   /// {@macro col_get_by_index}
-  @experimental
   OBJ? getByIndexSync(String indexName, IndexKey key) {
     return getAllByIndexSync(indexName, [key])[0];
   }
@@ -66,11 +64,9 @@ abstract class IsarCollection<OBJ> {
   ///
   /// If possible, you should use the generated type-safe methods instead.
   /// {@endtemplate}
-  @experimental
   Future<List<OBJ?>> getAllByIndex(String indexName, List<IndexKey> keys);
 
   /// {@macro col_get_all_by_index}'
-  @experimental
   List<OBJ?> getAllByIndexSync(String indexName, List<IndexKey> keys);
 
   /// {@template col_put}
@@ -114,13 +110,11 @@ abstract class IsarCollection<OBJ> {
   ///
   /// If possible, you should use the generated type-safe methods instead.
   /// {@endtemplate}
-  @experimental
   Future<Id> putByIndex(String indexName, OBJ object) {
     return putAllByIndex(indexName, [object]).then((List<Id> ids) => ids[0]);
   }
 
   /// {@macro col_put_by_index}
-  @experimental
   Id putByIndexSync(String indexName, OBJ object, {bool saveLinks = true}) {
     return putAllByIndexSync(indexName, [object])[0];
   }
@@ -139,11 +133,9 @@ abstract class IsarCollection<OBJ> {
   ///
   /// If possible, you should use the generated type-safe methods instead.
   /// {@endtemplate}
-  @experimental
   Future<List<Id>> putAllByIndex(String indexName, List<OBJ> objects);
 
   /// {@macro col_put_all_by_index}
-  @experimental
   List<Id> putAllByIndexSync(
     String indexName,
     List<OBJ> objects, {
@@ -182,13 +174,11 @@ abstract class IsarCollection<OBJ> {
   /// Returns whether the object has been deleted. Isar web always returns
   /// `true`.
   /// {@endtemplate}
-  @experimental
   Future<bool> deleteByIndex(String indexName, IndexKey key) {
     return deleteAllByIndex(indexName, [key]).then((int count) => count == 1);
   }
 
   /// {@macro col_delete_by_index}
-  @experimental
   bool deleteByIndexSync(String indexName, IndexKey key) {
     return deleteAllByIndexSync(indexName, [key]) == 1;
   }
@@ -199,11 +189,9 @@ abstract class IsarCollection<OBJ> {
   /// Returns the number of objects that have been deleted. Isar web always
   /// returns `keys.length`.
   /// {@endtemplate}
-  @experimental
   Future<int> deleteAllByIndex(String indexName, List<IndexKey> keys);
 
   /// {@macro col_delete_all_by_index}
-  @experimental
   int deleteAllByIndexSync(String indexName, List<IndexKey> keys);
 
   /// {@template col_clear}
@@ -324,7 +312,6 @@ abstract class IsarCollection<OBJ> {
   ///
   /// Do not use this method in production apps.
   @visibleForTesting
-  @experimental
   Future<void> verify(List<OBJ> objects);
 
   /// Verifies the integrity of a link.
@@ -334,7 +321,6 @@ abstract class IsarCollection<OBJ> {
   ///
   /// Do not use this method in production apps.
   @visibleForTesting
-  @experimental
   Future<void> verifyLink(
     String linkName,
     List<int> sourceIds,

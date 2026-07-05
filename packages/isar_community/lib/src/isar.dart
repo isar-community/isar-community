@@ -259,7 +259,6 @@ abstract class Isar {
   ///
   /// Do not use this method in production apps.
   @visibleForTesting
-  @experimental
   Future<void> verify();
 
   /// A list of all Isar instances opened in the current isolate.
