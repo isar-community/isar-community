@@ -28,6 +28,7 @@ pub struct IsarCollection {
 
     pub(crate) instance_id: u64,
     pub(crate) db: Db,
+    pub(crate) auto_increment_db: Db,
 
     pub(crate) indexes: Vec<IsarIndex>,
     pub(crate) links: Vec<IsarLink>, // links from this collection
@@ -43,6 +44,7 @@ impl IsarCollection {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn new(
         db: Db,
+        auto_increment_db: Db,
         instance_id: u64,
         name: &str,
         properties: Vec<Property>,
@@ -59,6 +61,7 @@ impl IsarCollection {
             embedded_properties,
             instance_id,
             db,
+            auto_increment_db,
             indexes,
             links,
             backlinks,
@@ -74,7 +77,31 @@ impl IsarCollection {
         QueryBuilder::new(self)
     }
 
+    fn auto_increment_key(&self) -> IndexKey {
+        IndexKey::from_bytes(self.name.as_bytes().to_vec())
+    }
+
+    fn persist_auto_increment(&self, cursors: &IsarCursors) -> Result<()> {
+        let key = self.auto_increment_key();
+        let value = self.auto_increment.get().to_le_bytes();
+        let mut cursor = cursors.get_cursor(self.auto_increment_db)?;
+        cursor.put(&key, &value)?;
+        Ok(())
+    }
+
     pub(crate) fn init_auto_increment(&self, cursors: &IsarCursors) -> Result<()> {
+        // Restore persisted high-water mark so deleted high-ID objects don't cause ID reuse
+        let ai_key = self.auto_increment_key();
+        {
+            let mut ai_cursor = cursors.get_cursor(self.auto_increment_db)?;
+            if let Some((_, bytes)) = ai_cursor.move_to(&ai_key)? {
+                if let Ok(arr) = bytes.try_into() {
+                    self.auto_increment.set(i64::from_le_bytes(arr));
+                }
+            }
+        }
+
+        // Also take max with the last ID actually in the B-tree (safety guard for existing dbs)
         let mut cursor = cursors.get_cursor(self.db)?;
         if let Some((key, _)) = cursor.move_to_last()? {
             let id = key.to_id();
@@ -184,6 +211,8 @@ impl IsarCollection {
         } else {
             self.auto_increment_internal()?
         };
+
+        self.persist_auto_increment(cursors)?;
 
         for index in &self.indexes {
             index.create_for_object(cursors, id, object, |id| {
@@ -298,6 +327,7 @@ impl IsarCollection {
             }
             cursors.clear_db(self.db)?;
             self.auto_increment.set(0);
+            self.persist_auto_increment(cursors)?;
 
             if let Some(change_set) = change_set {
                 change_set.register_all(self.id);

@@ -112,7 +112,7 @@ impl IsarInstance {
 
         Self::move_old_database(name, dir, &isar_file);
 
-        let db_count = schema.count_dbs() as u64 + 3;
+        let db_count = schema.count_dbs() as u64 + 4; // +1 for _info, +1 for _autoincrement, +2 buffer
         let env = Env::create(
             &isar_file,
             db_count,
@@ -348,6 +348,7 @@ impl IsarInstance {
     pub fn verify(&self, txn: &mut IsarTxn) -> Result<()> {
         let mut db_names = vec![];
         db_names.push("_info".to_string());
+        db_names.push("_autoincrement".to_string());
         for col in &self.collections {
             db_names.push(col.name.clone());
             for index in &col.indexes {

@@ -32,6 +32,7 @@ static OLD_INFO_SCHEMA_KEY: Lazy<IndexKey> = Lazy::new(|| {
 pub(crate) struct SchemaManager {
     instance_id: u64,
     info_db: Db,
+    auto_increment_db: Db,
     pub schemas: Vec<CollectionSchema>,
 }
 
@@ -40,6 +41,7 @@ impl SchemaManager {
 
     pub fn create(instance_id: u64, txn: &Txn) -> Result<Self> {
         let info_db = Db::open(txn, Some("_info"), false, false, false)?;
+        let auto_increment_db = Db::open(txn, Some("_autoincrement"), false, false, false)?;
         let mut info_cursor = UnboundCursor::new().bind(txn, info_db)?;
 
         Self::migrate_old_info(&mut info_cursor)?;
@@ -48,6 +50,7 @@ impl SchemaManager {
         let manager = SchemaManager {
             instance_id,
             info_db,
+            auto_increment_db,
             schemas,
         };
         Ok(manager)
@@ -239,6 +242,7 @@ impl SchemaManager {
         let backlinks = Self::open_backlinks(txn, db, &schema, schemas)?;
         let col = IsarCollection::new(
             db,
+            self.auto_increment_db,
             self.instance_id,
             &schema.name,
             properties,
