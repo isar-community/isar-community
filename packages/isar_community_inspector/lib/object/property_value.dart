@@ -152,25 +152,45 @@ class PropertyValue extends StatelessWidget {
         final date = value != null
             ? DateTime.fromMicrosecondsSinceEpoch(value as int)
             : null;
-        return GestureDetector(
-          onTap: onUpdate == null
-              ? null
-              : () async {
-                  final newDate = await showDatePicker(
-                    context: context,
-                    initialDate: date ?? DateTime.now(),
-                    firstDate: DateTime(1970),
-                    lastDate: DateTime(2050),
-                  );
-                  onUpdate?.call(newDate?.microsecondsSinceEpoch);
-                },
-          child: Text(
-            date?.toIso8601String() ?? 'null',
-            style: GoogleFonts.jetBrainsMono(
-              color: date != null ? Colors.blue : Colors.grey,
-              fontWeight: FontWeight.bold,
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            GestureDetector(
+              onTap: onUpdate == null
+                  ? null
+                  : () async {
+                      final newDate = await showDatePicker(
+                        context: context,
+                        initialDate: date ?? DateTime.now(),
+                        firstDate: DateTime(1970),
+                        lastDate: DateTime(2050),
+                      );
+                      if (newDate != null) {
+                        onUpdate?.call(newDate.microsecondsSinceEpoch);
+                      }
+                    },
+              child: Text(
+                date?.toIso8601String() ?? 'null',
+                style: GoogleFonts.jetBrainsMono(
+                  color: date != null ? Colors.blue : Colors.grey,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
+            if (onUpdate != null && date != null)
+              SizedBox(
+                height: 24,
+                width: 24,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  iconSize: 16,
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    onUpdate?.call(null);
+                  },
+                ),
+              ),
+          ],
         );
       case IsarType.string:
       case IsarType.stringList:
