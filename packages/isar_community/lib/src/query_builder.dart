@@ -264,10 +264,15 @@ class QueryBuilderInternal<OBJ> {
   /// @nodoc
   @protected
   Query<R> build<R>() {
+    final effectiveWhereClauses = whereClauses.isEmpty &&
+            whereSort == Sort.desc
+        ? const [IdWhereClause.any()]
+        : whereClauses;
+
     return collection!.buildQuery(
       whereDistinct: whereDistinct,
       whereSort: whereSort,
-      whereClauses: whereClauses,
+      whereClauses: effectiveWhereClauses,
       filter: filter,
       sortBy: sortByProperties,
       distinctBy: distinctByProperties,
