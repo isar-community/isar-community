@@ -5,12 +5,14 @@ import Foundation
 import PackageDescription
 
 let packageDir = URL(fileURLWithPath: #filePath).deletingLastPathComponent()
-let localXcframeworkPath = packageDir.appendingPathComponent("isar.xcframework").path
-let useLocalBinary = FileManager.default.fileExists(atPath: localXcframeworkPath)
+let localInfoPlist = packageDir
+    .appendingPathComponent("isar.xcframework")
+    .appendingPathComponent("Info.plist")
+    .path
+// Require a real xcframework (Info.plist), not an empty directory Flutter may leave behind.
+let useLocalBinary = FileManager.default.fileExists(atPath: localInfoPlist)
 
 // Keep in sync with packages/isar_community version / binaries CDN.
-// Prefer a local xcframework (CI / download_binaries / pub publish). Fall back to
-// the published zip so git path dependencies still resolve under SPM.
 let isarVersion = "3.3.2"
 let isarMacosChecksum = "d146141ef2af2684ab62c5ebedc6b5d05879e9428c3225310cafc66d2d44f5a7"
 
