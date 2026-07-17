@@ -1,3 +1,6 @@
+## 3.3.3
+- Added Swift Package Manager support for iOS and macOS in `isar_community_flutter_libs` (CocoaPods support retained)
+
 ## 3.3.2
 
 ### Updates

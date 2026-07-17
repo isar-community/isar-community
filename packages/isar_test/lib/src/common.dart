@@ -9,7 +9,6 @@ import 'package:isar_test/src/init_native.dart'
     if (dart.library.html) 'package:isar_test/src/init_web.dart';
 import 'package:isar_test/src/sync_async_helper.dart';
 import 'package:meta/meta.dart';
-import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:test_api/src/backend/invoker.dart';
 
@@ -70,19 +69,16 @@ void _isarTest(
   test(
     testName,
     () async {
-      await runZoned(
-        () async {
-          try {
-            await _prepareTest();
-            await body();
-            testCount++;
-          } catch (e) {
-            testErrors.add('$testName: $e');
-            rethrow;
-          }
-        },
-        zoneValues: {#syncTest: syncTest},
-      );
+      await runZoned(() async {
+        try {
+          await _prepareTest();
+          await body();
+          testCount++;
+        } catch (e) {
+          testErrors.add('$testName: $e');
+          rethrow;
+        }
+      }, zoneValues: {#syncTest: syncTest});
     },
     timeout: timeout ?? const Timeout(Duration(minutes: 10)),
     skip: skip,
@@ -115,8 +111,15 @@ Future<Isar> openTempIsar(
 }) async {
   await _prepareTest();
   if (!kIsWeb && directory == null && testTempPath == null) {
-    final dartToolDir = path.join(Directory.current.path, '.dart_tool');
-    testTempPath = path.join(dartToolDir, 'test', 'tmp');
+    // ISAR_TEST_TMP is set via --dart-define in CI to a workspace path that is
+    // guaranteed accessible. Falls back to systemTemp for local runs.
+    const envTmp = String.fromEnvironment('ISAR_TEST_TMP');
+    if (envTmp.isNotEmpty) {
+      testTempPath = envTmp;
+    } else {
+      final tempDir = await Directory.systemTemp.createTemp('isar_test_');
+      testTempPath = tempDir.path;
+    }
     await Directory(testTempPath!).create(recursive: true);
   }
 

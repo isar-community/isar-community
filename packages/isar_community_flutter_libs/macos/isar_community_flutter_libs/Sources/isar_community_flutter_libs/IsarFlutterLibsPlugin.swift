@@ -1,10 +1,18 @@
 import Cocoa
 import FlutterMacOS
 
+@_silgen_name("isar_get_error")
+func isar_get_error(_ err: UInt32) -> UnsafeMutablePointer<Int8>?
+
 public class IsarFlutterLibsPlugin: NSObject, FlutterPlugin {
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "isar_community_flutter_libs", binaryMessenger: registrar.messenger)
+    let channel = FlutterMethodChannel(
+      name: "isar_community_flutter_libs",
+      binaryMessenger: registrar.messenger
+    )
     let instance = IsarFlutterLibsPlugin()
+    // Keep a reachable reference so the Isar symbols are not stripped under SPM.
+    instance.dummyMethodToEnforceBundling()
     registrar.addMethodCallDelegate(instance, channel: channel)
   }
 
@@ -15,5 +23,9 @@ public class IsarFlutterLibsPlugin: NSObject, FlutterPlugin {
     default:
       result(FlutterMethodNotImplemented)
     }
+  }
+
+  public func dummyMethodToEnforceBundling() {
+    _ = isar_get_error(0)
   }
 }

@@ -72,3 +72,7 @@ isar-dart.h
 
 # Coverage
 coverage/
+
+# Swift Package Manager
+.build/
+.swiftpm/

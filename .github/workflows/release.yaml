@@ -1,7 +1,7 @@
 name: Isar release
 
 env:
-  FLUTTER_OVERRIDE: "3.35.1"
+  FLUTTER_OVERRIDE: "3.44.0"
 
 on:
   push:

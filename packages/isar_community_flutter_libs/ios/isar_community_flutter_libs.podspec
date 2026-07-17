@@ -7,12 +7,10 @@ Pod::Spec.new do |s|
   s.author           = { 'Isar' => 'hello@isar.dev' }
 
   s.source           = { :path => '.' }
-  s.source_files     = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
-
+  s.source_files     = 'isar_community_flutter_libs/Sources/isar_community_flutter_libs/**/*.swift'
   s.dependency 'Flutter'
-  s.platform = :ios, '11.0'
-  s.swift_version = '5.3'
-  s.vendored_frameworks = 'isar.xcframework'
-  s.resource_bundles = {'isar_community_flutter_libs_apple_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.platform = :ios, '13.0'
+  s.swift_version = '5.9'
+  s.vendored_frameworks = 'isar_community_flutter_libs/isar.xcframework'
+  s.resource_bundles = {'isar_community_flutter_libs_apple_privacy' => ['isar_community_flutter_libs/Sources/isar_community_flutter_libs/PrivacyInfo.xcprivacy']}
 end
