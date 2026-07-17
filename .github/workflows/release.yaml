@@ -55,6 +55,7 @@ jobs:
           - os: macos-15
             artifact_name: libisar_macos.dylib
             script: build_macos.sh
+            extra_artifact: isar_macos.xcframework.zip
           - os: windows-2022
             artifact_name: isar_windows_arm64.dll
             script: build_windows.sh
@@ -80,12 +81,27 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: ${{ matrix.artifact_name }}
           retention-days: 1
+      - name: Upload extra binary to artifacts
+        if: ${{ matrix.extra_artifact }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.extra_artifact }}
+          path: ${{ matrix.extra_artifact }}
+          retention-days: 1
       - name: Upload binary to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: ${{ matrix.artifact_name }}
           asset_name: ${{ matrix.artifact_name }}
+          tag: ${{ github.ref }}
+      - name: Upload extra binary to release
+        if: ${{ matrix.extra_artifact }}
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ matrix.extra_artifact }}
+          asset_name: ${{ matrix.extra_artifact }}
           tag: ${{ github.ref }}
 
   testlab:

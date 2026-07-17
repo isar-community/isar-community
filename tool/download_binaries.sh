@@ -24,11 +24,18 @@ macos_spm_dir="$macos_dir/isar_community_flutter_libs"
 mkdir -p "$macos_spm_dir"
 curl "${binariesUrl}/libisar_macos.dylib" -o "$macos_dir/libisar.dylib" --create-dirs -L -f
 rm -rf "$macos_spm_dir/isar.xcframework"
-cp "$macos_dir/libisar.dylib" /tmp/libisar.dylib
-xcodebuild -create-xcframework \
-  -library /tmp/libisar.dylib \
-  -output "$macos_spm_dir/isar.xcframework"
-rm -f /tmp/libisar.dylib
+# Prefer a prebuilt SPM zip from the CDN when available; otherwise wrap the dylib.
+if curl --head --silent --fail "${binariesUrl}/isar_macos.xcframework.zip" >/dev/null 2>&1; then
+  curl "${binariesUrl}/isar_macos.xcframework.zip" -o /tmp/isar_macos.xcframework.zip -L -f
+  unzip -o /tmp/isar_macos.xcframework.zip -d "$macos_spm_dir"
+  rm -f /tmp/isar_macos.xcframework.zip
+else
+  cp "$macos_dir/libisar.dylib" /tmp/libisar.dylib
+  xcodebuild -create-xcframework \
+    -library /tmp/libisar.dylib \
+    -output "$macos_spm_dir/isar.xcframework"
+  rm -f /tmp/libisar.dylib
+fi
 
 curl "${binariesUrl}/libisar_linux_x64.so" -o packages/isar_community_flutter_libs/linux/libisar.so --create-dirs -L -f
 curl "${binariesUrl}/isar_windows_x64.dll" -o packages/isar_community_flutter_libs/windows/libisar.dll --create-dirs -L -f

@@ -9,3 +9,5 @@ analyzer:
     avoid_positional_boolean_parameters: ignore
     parameter_assignments: ignore
     prefer_asserts_with_message: ignore
+    sort_constructors_first: ignore
+    experimental_member_use: ignore

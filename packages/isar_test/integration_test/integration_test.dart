@@ -35,9 +35,13 @@ void main() async {
     tests.main();
   });
 
-  testWidgets('Isar', (t) async {
-    await completer.future;
-    expect(testCount > 0, true);
-    expect(testErrors, isEmpty);
-  }, timeout: Timeout.none);
+  testWidgets(
+    'Isar',
+    (t) async {
+      await completer.future;
+      expect(testCount > 0, true);
+      expect(testErrors, isEmpty);
+    },
+    timeout: Timeout.none,
+  );
 }

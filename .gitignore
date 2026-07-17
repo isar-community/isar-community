@@ -24,6 +24,11 @@ target/
 *.dll
 *.zip
 *.xcframework/
+# Keep the macOS SPM xcframework in git so `git:` path dependencies can resolve
+# SwiftPM without a separate binaries download (iOS uses a remote binaryTarget).
+!packages/isar_community_flutter_libs/macos/isar_community_flutter_libs/isar.xcframework/
+!packages/isar_community_flutter_libs/macos/isar_community_flutter_libs/isar.xcframework/**
+!packages/isar_community_flutter_libs/macos/libisar.dylib
 isar-dart.h
 
 # Android related

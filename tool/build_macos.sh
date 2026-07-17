@@ -26,3 +26,10 @@ xcodebuild -create-xcframework \
   -library /tmp/libisar.dylib \
   -output "$macos_spm_dir/isar.xcframework"
 rm -f /tmp/libisar.dylib
+
+# Zip for SPM remote binaryTarget / CDN publishing (checksum used in Package.swift).
+rm -f isar_macos.xcframework.zip
+(
+  cd "$macos_spm_dir"
+  zip -r "$OLDPWD/isar_macos.xcframework.zip" isar.xcframework
+)

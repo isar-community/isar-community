@@ -1,3 +1,6 @@
 analyzer:
+  exclude:
+    - "**/*.g.dart"
   errors:
     public_member_api_docs: ignore
+    experimental_member_use: ignore
