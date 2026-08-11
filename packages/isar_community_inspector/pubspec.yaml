@@ -12,9 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_svg: any
-  font_awesome_flutter: ^10.8.0
+  font_awesome_flutter: ^11.0.0
   go_router: ^5.0.0
-  google_fonts: 6.1.0
+  google_fonts: ^6.2.1
   isar_community:
     path: ../isar_community
   vm_service: ^11.0.0

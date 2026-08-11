@@ -21,11 +21,13 @@ class CollectionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final sortedCollections = List<CollectionSchema<dynamic>>.from(collections)
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
     return ListView.builder(
       primary: false,
       itemBuilder: (BuildContext context, int index) {
-        final collection = collections[index];
+        final collection = sortedCollections[index];
         final info = collectionInfo[collection.name];
 
         return Padding(
@@ -80,7 +82,7 @@ class CollectionsList extends StatelessWidget {
           ),
         );
       },
-      itemCount: collections.length,
+      itemCount: sortedCollections.length,
     );
   }
 }

@@ -150,11 +150,13 @@ class _SearchablePropertyPicker extends StatefulWidget {
 class __SearchablePropertyPickerState
     extends State<_SearchablePropertyPicker> {
   List<PropertySchema> get _availableProperties {
-    return widget.collection.idAndProperties
+    final props = widget.collection.idAndProperties
         .where(
           (p) => p.type != IsarType.object && p.type != IsarType.objectList,
         )
         .toList();
+    props.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return props;
   }
 
   void _showSearchDialog(BuildContext context) {
@@ -162,7 +164,7 @@ class __SearchablePropertyPickerState
     showDialog<String>(
       context: context,
       builder: (context) {
-        String filter = '';
+        var filter = '';
         return StatefulBuilder(
           builder: (context, setStateDialog) {
             final filtered = properties

@@ -92,7 +92,8 @@ class ConnectClient {
         .map(
           (e) => CollectionSchema<dynamic>.fromJson(e as Map<String, dynamic>),
         )
-        .toList();
+        .toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   }
 
   Future<List<String>> listInstances() async {
