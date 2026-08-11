@@ -144,11 +144,10 @@ class _SearchablePropertyPicker extends StatefulWidget {
 
   @override
   State<_SearchablePropertyPicker> createState() =>
-      __SearchablePropertyPickerState();
+      _SearchablePropertyPickerState();
 }
 
-class __SearchablePropertyPickerState
-    extends State<_SearchablePropertyPicker> {
+class _SearchablePropertyPickerState extends State<_SearchablePropertyPicker> {
   List<PropertySchema> get _availableProperties {
     final props = widget.collection.idAndProperties
         .where(
@@ -242,6 +241,7 @@ class __SearchablePropertyPickerState
         );
       },
     ).then((selected) {
+      if (!mounted) return;
       if (selected != null && selected != widget.selectedProperty) {
         widget.onSelected(selected);
       }
