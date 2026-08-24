@@ -9,7 +9,7 @@ funding:
   - https://github.com/sponsors/vicenterusso/
 
 environment:
-  sdk: ">=3.9.0 <4.0.0"
+  sdk: ">=3.11.0 <4.0.0"
 
 platforms:
   android:
