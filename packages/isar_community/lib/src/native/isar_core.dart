@@ -92,9 +92,7 @@ void _initializePath(String? libraryPath) {
     try {
       dylib = DynamicLibrary.open(libraryPath!);
     } catch (_) {
-      // When using SPM, the dylib is linked via the xcframework plugin.
-      // The @_silgen_name reference in IsarFlutterLibsPlugin ensures it's
-      // loaded into the process, so DynamicLibrary.process() can find it.
+      // SwiftPM links the XCFramework into the app process.
       dylib = DynamicLibrary.process();
     }
   } else {
