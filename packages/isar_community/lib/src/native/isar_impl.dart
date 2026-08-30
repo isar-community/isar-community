@@ -12,13 +12,13 @@ import 'package:isar_community/src/native/isar_core.dart';
 import 'package:isar_community/src/native/txn.dart';
 
 class IsarImpl extends IsarCommon implements Finalizable {
+  static final _finalizer = NativeFinalizer(isarClose);
+
   IsarImpl(super.name, this.ptr) {
-    _finalizer = NativeFinalizer(isarClose);
     _finalizer.attach(this, ptr.cast(), detach: this);
   }
 
   final Pointer<CIsarInstance> ptr;
-  late final NativeFinalizer _finalizer;
 
   final offsets = <Type, List<int>>{};
 
