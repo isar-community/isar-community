@@ -39,11 +39,18 @@ extension ClassElementX on ClassElement {
             ],
         ]
         .where(
-          (PropertyInducingElement e) =>
-              e.isPublic &&
-              !e.isStatic &&
-              !_ignoreChecker.hasAnnotationOf(e.nonSynthetic) &&
-              !ignoreFields.contains(e.name),
+          (PropertyInducingElement e) {
+            if (!e.isPublic ||
+                e.isStatic ||
+                ignoreFields.contains(e.name) ||
+                _ignoreChecker.hasAnnotationOf(e.nonSynthetic) ||
+                (e.nonSynthetic != e &&
+                    e.getter != null &&
+                    _ignoreChecker.hasAnnotationOf(e.getter!))) {
+              return false;
+            }
+            return true;
+          },
         )
         .distinctBy((e) => e.name)
         .toList();

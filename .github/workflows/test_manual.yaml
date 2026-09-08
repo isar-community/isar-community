@@ -1,0 +1,38 @@
+name: Dart - manual generator tests with version input
+
+env:
+  FLUTTER_OVERRIDE: ${{ github.event.inputs.flutter_version }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      flutter_version:
+        description: "Flutter Version"
+        required: true
+        default: "3.38.7"
+
+jobs:
+  version:
+    name: Version Display
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_OVERRIDE || vars.FLUTTER_VERSION }}
+      - run: flutter --version
+
+  test_generator:
+    name: Generator Test
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_OVERRIDE || vars.FLUTTER_VERSION }}
+      - name: Run Generator Unit tests
+        run: |
+          dart pub get
+          dart test
+        working-directory: packages/isar_community_generator
