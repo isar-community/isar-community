@@ -88,6 +88,13 @@ void _initializePath(String? libraryPath) {
   late DynamicLibrary dylib;
   if (Platform.isIOS) {
     dylib = DynamicLibrary.process();
+  } else if (Platform.isMacOS) {
+    try {
+      dylib = DynamicLibrary.open(libraryPath!);
+    } catch (_) {
+      // SwiftPM links the XCFramework into the app process.
+      dylib = DynamicLibrary.process();
+    }
   } else {
     dylib = DynamicLibrary.open(libraryPath!);
   }

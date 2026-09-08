@@ -17,6 +17,7 @@ void main() async {
     setUpAll(() async {
       if (!kIsWeb) {
         final dir = await getTemporaryDirectory();
+        await dir.create(recursive: true);
         testTempPath = dir.path;
       }
     });
