@@ -15,3 +15,12 @@ rustup run $RUST_TOOLCHAIN cargo build --target aarch64-apple-darwin --release
 rustup run $RUST_TOOLCHAIN cargo build --target x86_64-apple-darwin --release
 lipo "target/aarch64-apple-darwin/release/libisar.dylib" "target/x86_64-apple-darwin/release/libisar.dylib" -output "libisar_macos.dylib" -create
 install_name_tool -id @rpath/libisar.dylib libisar_macos.dylib
+
+# SwiftPM: the macOS Package.swift declares a .binaryTarget, which requires
+# an xcframework. Build it here (macOS runner, where xcodebuild is available)
+# and ship it as a zip, mirroring iOS -- that way the publish job, which runs
+# on Linux, only needs curl + unzip.
+cp libisar_macos.dylib libisar.dylib
+rm -rf isar.xcframework
+xcodebuild -create-xcframework -library libisar.dylib -output isar.xcframework
+zip -r isar_macos.xcframework.zip isar.xcframework

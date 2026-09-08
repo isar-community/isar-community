@@ -115,9 +115,21 @@ Future<Isar> openTempIsar(
 }) async {
   await _prepareTest();
   if (!kIsWeb && directory == null && testTempPath == null) {
-    final dartToolDir = path.join(Directory.current.path, '.dart_tool');
-    testTempPath = path.join(dartToolDir, 'test', 'tmp');
+    // ISAR_TEST_TMP is set via --dart-define in CI to the workspace path,
+    // which is guaranteed accessible. Falls back to systemTemp for local runs.
+    const envTmp = String.fromEnvironment('ISAR_TEST_TMP');
+    if (envTmp.isNotEmpty) {
+      testTempPath = envTmp;
+    } else {
+      final tempDir = await Directory.systemTemp.createTemp('isar_test_');
+      testTempPath = tempDir.path;
+    }
     await Directory(testTempPath!).create(recursive: true);
+    try {
+      await File('/tmp/isar_diag.txt').writeAsString(
+        'path=$testTempPath\nexists=${await Directory(testTempPath!).exists()}\n',
+      );
+    } catch (_) {}
   }
 
   final isar = await tOpen(

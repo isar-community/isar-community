@@ -88,6 +88,15 @@ void _initializePath(String? libraryPath) {
   late DynamicLibrary dylib;
   if (Platform.isIOS) {
     dylib = DynamicLibrary.process();
+  } else if (Platform.isMacOS) {
+    try {
+      dylib = DynamicLibrary.open(libraryPath!);
+    } catch (_) {
+      // When using SPM, the dylib is linked via the xcframework plugin.
+      // The @_silgen_name reference in IsarFlutterLibsPlugin ensures it's
+      // loaded into the process, so DynamicLibrary.process() can find it.
+      dylib = DynamicLibrary.process();
+    }
   } else {
     dylib = DynamicLibrary.open(libraryPath!);
   }
