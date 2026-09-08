@@ -9,7 +9,7 @@ funding:
   - https://github.com/sponsors/vicenterusso/
 
 environment:
-  sdk: ">=3.9.0 <4.0.0"
+  sdk: ">=3.11.0 <4.0.0"
 
 platforms:
   android:
@@ -19,7 +19,7 @@ platforms:
   windows:
 
 dependencies:
-  analyzer: ">=8.0.0 <11.0.0"
+  analyzer: ">=13.3.0 <15.0.0"
   build: ^4.0.0
   dart_style: ">=3.0.1 <4.0.0"
   dartx: ^1.1.0
