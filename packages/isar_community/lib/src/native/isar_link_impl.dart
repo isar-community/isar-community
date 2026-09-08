@@ -34,13 +34,20 @@ mixin IsarLinkBaseMixin<OBJ> on IsarLinkBaseImpl<OBJ> {
     final unlinkList = unlink.toList();
 
     final containingId = requireAttached();
-    return targetCollection.isar.getTxn(true, (Txn txn) {
+    return targetCollection.isar.getTxn(true, (Txn txn) async {
       final count = linkList.length + unlinkList.length;
       final idsPtr = txn.alloc<Int64>(count);
       final ids = idsPtr.asTypedList(count);
 
       for (var i = 0; i < linkList.length; i++) {
-        ids[i] = requireGetId(linkList[i]);
+        final object = linkList[i];
+        var id = getId(object);
+
+        if (id == Isar.autoIncrement) {
+          id = await targetCollection.put(object);
+        }
+
+        ids[i] = id;
       }
       for (var i = 0; i < unlinkList.length; i++) {
         ids[linkList.length + i] = requireGetId(unlinkList[i]);
@@ -56,7 +63,7 @@ mixin IsarLinkBaseMixin<OBJ> on IsarLinkBaseImpl<OBJ> {
         unlinkList.length,
         reset,
       );
-      return txn.wait();
+      await txn.wait();
     });
   }
 

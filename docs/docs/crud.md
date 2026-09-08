@@ -154,6 +154,16 @@ await isar.writeTxn(() async {
 })
 ```
 
+By default, `put()` and `putAll()` don't touch any links on the object, so if the object has an `IsarLink` or `IsarLinks`, you still need to call `link.save()` yourself. If you'd rather have that happen automatically, pass `saveLinks: true`:
+
+```dart
+await isar.writeTxn(() async {
+  await isar.recipes.put(pancakes, saveLinks: true);
+})
+```
+
+This isn't supported on the web, calling it with `saveLinks: true` there throws an `UnsupportedError`. The synchronous `putSync()`/`putAllSync()` methods already default to `saveLinks: true`, so this option mostly exists to bring the async methods in line with that behavior.
+
 ### Update object
 
 Both creating and updating works with `collection.put(object)`. If the id is `null` (or does not exist), the object is inserted; otherwise, it is updated.

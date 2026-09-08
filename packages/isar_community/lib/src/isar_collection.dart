@@ -78,9 +78,16 @@ abstract class IsarCollection<OBJ> {
   ///
   /// If the object has an non-final id property, it will be set to the assigned
   /// id. Otherwise you should use the returned id to update the object.
+  ///
+  /// If [saveLinks] is true, all changed `IsarLink`/`IsarLinks` on the object
+  /// are saved along with it, so you don't have to call `link.save()`
+  /// yourself. `put` defaults to false, `putSync` defaults to true. Saving
+  /// links is not supported on web, passing `saveLinks: true` there throws
+  /// an `UnsupportedError`.
   /// {@endtemplate}
-  Future<Id> put(OBJ object) {
-    return putAll([object]).then((List<Id> ids) => ids[0]);
+  Future<Id> put(OBJ object, {bool saveLinks = false}) {
+    return putAll([object], saveLinks: saveLinks)
+        .then((List<Id> ids) => ids[0]);
   }
 
   /// {@macro col_put}
@@ -95,8 +102,14 @@ abstract class IsarCollection<OBJ> {
   /// If the objects have an non-final id property, it will be set to the
   /// assigned id. Otherwise you should use the returned ids to update the
   /// objects.
+  ///
+  /// If [saveLinks] is true, all changed `IsarLink`/`IsarLinks` on the
+  /// objects are saved along with them, so you don't have to call
+  /// `link.save()` yourself. `putAll` defaults to false, `putAllSync`
+  /// defaults to true. Saving links is not supported on web, passing
+  /// `saveLinks: true` there throws an `UnsupportedError`.
   /// {@endtemplate}
-  Future<List<Id>> putAll(List<OBJ> objects);
+  Future<List<Id>> putAll(List<OBJ> objects, {bool saveLinks = false});
 
   /// {@macro col_put_all}
   List<Id> putAllSync(List<OBJ> objects, {bool saveLinks = true});

@@ -48,18 +48,22 @@ class IsarImpl extends IsarCommon implements Finalizable {
     final portStream = wrapIsarPort(port);
 
     final txnPtrPtr = malloc<Pointer<CIsarTxn>>();
-    IC.isar_txn_begin(
-      ptr,
-      txnPtrPtr,
-      false,
-      write,
-      silent,
-      port.sendPort.nativePort,
-    );
+    try {
+      IC.isar_txn_begin(
+        ptr,
+        txnPtrPtr,
+        false,
+        write,
+        silent,
+        port.sendPort.nativePort,
+      );
 
-    final txn = Txn.async(this, txnPtrPtr.value, write, portStream);
-    await txn.wait();
-    return txn;
+      final txn = Txn.async(this, txnPtrPtr.value, write, portStream);
+      await txn.wait();
+      return txn;
+    } finally {
+      malloc.free(txnPtrPtr);
+    }
   }
 
   @override
@@ -71,6 +75,7 @@ class IsarImpl extends IsarCommon implements Finalizable {
   @override
   bool performClose(bool deleteFromDisk) {
     _finalizer.detach(this);
+    malloc.free(_syncTxnPtrPtr);
     if (deleteFromDisk) {
       return IC.isar_instance_close_and_delete(ptr);
     } else {

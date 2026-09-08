@@ -64,7 +64,23 @@ final linda = await isar.students.where().nameEqualTo('Linda').findFirst();
 final teacher = linda.teacher.value; // > Teacher(subject: 'Math')
 ```
 
-Let's try the same thing with synchronous code. We don't need to save the link manually because `.putSync()` automatically saves all links. It even creates the teacher for us.
+If you don't want to save the link manually, you can pass `saveLinks: true` to `.put()` instead:
+
+```dart
+final biologyTeacher = Teacher()..subject = 'Biology';
+
+final linda = Student()
+  ..name = 'Linda'
+  ..teacher.value = biologyTeacher;
+
+await isar.writeTxn(() async {
+  await isar.students.put(linda, saveLinks: true);
+});
+```
+
+`saveLinks` defaults to `false` on `.put()`/`.putAll()`, so unless you pass it explicitly, you're back to saving the link yourself like in the first example above. It's also not supported on the web.
+
+Let's try the same thing with synchronous code. We don't need to save the link manually because `.putSync()` automatically saves all links (`saveLinks` defaults to `true` there). It even creates the teacher for us.
 
 ```dart
 final englishTeacher = Teacher()..subject = 'English';

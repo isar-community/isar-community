@@ -6,7 +6,6 @@ import 'dart:ffi';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:ffi/ffi.dart';
 import 'package:isar_community/isar.dart';
 import 'package:isar_community/src/native/bindings.dart';
 import 'package:isar_community/src/native/encode_string.dart';
@@ -273,8 +272,11 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   }
 
   @override
-  Future<List<int>> putAll(List<OBJ> objects) {
-    return putAllByIndex(null, objects);
+  Future<List<int>> putAll(
+    List<OBJ> objects, {
+    bool saveLinks = false,
+  }) {
+    return putAllByIndex(null, objects, saveLinks: saveLinks);
   }
 
   @override
@@ -283,7 +285,11 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   }
 
   @override
-  Future<List<int>> putAllByIndex(String? indexName, List<OBJ> objects) {
+  Future<List<int>> putAllByIndex(
+    String? indexName,
+    List<OBJ> objects, {
+    bool saveLinks = false,
+  }) {
     final indexId = indexName != null ? schema.index(indexName).id : null;
 
     return isar.getTxn(true, (Txn txn) async {
@@ -299,6 +305,8 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
       await txn.wait();
       final cObjectSet = cObjSetPtr.ref;
       final ids = List<int>.filled(objects.length, 0);
+      final linkFutures = <Future<void>>[];
+
       for (var i = 0; i < objects.length; i++) {
         final cObjPtr = cObjectSet.objects + i;
         final id = cObjPtr.ref.id;
@@ -306,7 +314,20 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
 
         final object = objects[i];
         schema.attach(this, id, object);
+
+        if (saveLinks) {
+          for (final link in schema.getLinks(object)) {
+            if (link.isChanged) {
+              linkFutures.add(link.save());
+            }
+          }
+        }
       }
+
+      if (linkFutures.isNotEmpty) {
+        await Future.wait(linkFutures);
+      }
+
       return ids;
     });
   }
@@ -538,7 +559,6 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
   @override
   Stream<void> watchObjectLazy(Id id, {bool fireImmediately = false}) {
     isar.requireOpen();
-    final cObjPtr = malloc<CObject>();
 
     final port = ReceivePort();
     final handle = IC.isar_watch_object(
@@ -547,7 +567,6 @@ class IsarCollectionImpl<OBJ> extends IsarCollection<OBJ> {
       id,
       port.sendPort.nativePort,
     );
-    malloc.free(cObjPtr);
 
     final controller = StreamController<void>(
       onCancel: () {
