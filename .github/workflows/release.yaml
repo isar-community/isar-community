@@ -55,6 +55,9 @@ jobs:
           - os: macos-15
             artifact_name: libisar_macos.dylib
             script: build_macos.sh
+          - os: macos-15
+            artifact_name: isar_macos.xcframework.zip
+            script: build_macos.sh
           - os: windows-2022
             artifact_name: isar_windows_arm64.dll
             script: build_windows.sh
