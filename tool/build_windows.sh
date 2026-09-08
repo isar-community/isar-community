@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Definir a toolchain específica para Windows
+# Set the specific toolchain for Windows
 RUST_TOOLCHAIN="1.88.0-x86_64-pc-windows-msvc"
 
-# Instalar a toolchain se não existir
+# Install the toolchain if it is not present
 rustup toolchain install $RUST_TOOLCHAIN
 
 if [ "$1" = "x64" ]; then

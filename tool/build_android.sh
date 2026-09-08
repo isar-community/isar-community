@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Definir a toolchain específica
+# Set the specific toolchain
 RUST_TOOLCHAIN="1.88.0-x86_64-unknown-linux-gnu"
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
