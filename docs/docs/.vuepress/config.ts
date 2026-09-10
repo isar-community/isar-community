@@ -104,7 +104,7 @@ export default defineUserConfig({
                 rel: "icon",
                 type: "image/png",
                 sizes: "256x256",
-                href: `/icon-256x256.png`,
+                href: `/v3/icon-256x256.png`,
             },
         ],
         [
@@ -113,7 +113,7 @@ export default defineUserConfig({
                 rel: "icon",
                 type: "image/png",
                 sizes: "512x512",
-                href: `/icon-512x512.png`,
+                href: `/v3/icon-512x512.png`,
             },
         ],
         [

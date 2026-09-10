@@ -25,10 +25,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Isar Inspector">
-  <link rel="apple-touch-icon" href="https://isar-community.dev/icon-256x256.png">
+  <link rel="apple-touch-icon" href="https://isar-community.dev/v3/icon-256x256.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://isar-community.dev/icon-256x256.png" />
+  <link rel="icon" type="image/png" href="https://isar-community.dev/v3/icon-256x256.png" />
 
   <title>Isar Inspector</title>
   <link rel="manifest" href="manifest.json">
@@ -62,7 +62,7 @@
       text-align: center;
     }
 
-    #loader.hide  {
+    #loader.hide {
       animation: fade .5s;
     }
 
@@ -70,9 +70,11 @@
       0% {
         transform: rotate(0deg);
       }
+
       90% {
         transform: rotate(720deg);
       }
+
       100% {
         transform: rotate(720deg);
       }
@@ -82,6 +84,7 @@
       from {
         opacity: 1;
       }
+
       to {
         opacity: 0;
       }
@@ -90,10 +93,10 @@
 </head>
 
 <body>
-<section id="loader">
-  <img src="assets/assets/logo.png" alt="Isar Logo">
-  <span id="loader-info-text"></span>
-</section>
+  <section id="loader">
+    <img src="assets/assets/logo.png" alt="Isar Logo">
+    <span id="loader-info-text"></span>
+  </section>
   <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
@@ -108,10 +111,10 @@
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         }
-      }).then(function(engineInitializer) {
+      }).then(function (engineInitializer) {
         loading.textContent = "Initializing engine...";
         return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
+      }).then(function (appRunner) {
         loading.textContent = "Running app...";
         return appRunner.runApp();
       }).then(function (app) {

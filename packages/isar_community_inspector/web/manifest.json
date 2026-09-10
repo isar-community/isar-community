@@ -10,12 +10,12 @@
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "https://isar-community.dev/icon-256x256.png",
+            "src": "https://isar-community.dev/v3/icon-256x256.png",
             "sizes": "256x256",
             "type": "image/png"
         },
         {
-            "src": "https://isar-community.dev/icon-512x512.png",
+            "src": "https://isar-community.dev/v3/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
         }

@@ -24,7 +24,7 @@
 
 <p align="center">
   <a href="https://isar-community.dev">Quickstart</a> •
-  <a href="https://isar-community.dev/schema">Documentation</a> •
+  <a href="https://isar-community.dev/v3/schema">Documentation</a> •
   <a href="https://github.com/isar-community/isar-community/tree/v3/examples/">Sample Apps</a> •
   <a href="https://github.com/isar-community/isar-community/discussions">Support & Ideas</a> •
   <a href="https://pub.dev/packages/isar_community">Pub.dev</a>
