@@ -1,10 +1,10 @@
 #!/bin/bash
 
 
-# Definir a toolchain específica para macOS
+# Set the specific toolchain for macOS
 RUST_TOOLCHAIN="1.88.0-x86_64-apple-darwin"
 
-# Instalar a toolchain se não existir
+# Install the toolchain if it is not present
 rustup toolchain install $RUST_TOOLCHAIN
 
 echo "Building for macOS"

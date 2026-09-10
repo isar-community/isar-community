@@ -1,3 +1,14 @@
+## 3.3.2
+
+### Updates
+- Widened `analyzer` constraint from `>=7.4.5 <9.0.0` to `>=8.0.0 <11.0.0`
+- Widened `source_gen` constraint to `>=4.0.0 <5.0.0`
+- Widened `dart_style` constraint to `>=3.0.1 <4.0.0`
+- Bumped minimum Dart SDK to `>=3.9.0`
+
+### Fixes
+- Replaced deprecated `isSynthetic` with `nonSynthetic` in generator to support `analyzer` 10.x
+
 ## 3.3.1
 
 ### Updates

@@ -15,7 +15,8 @@ String generateQueryObjects(ObjectInfo oi) {
     if (property.isarType.isList) {
       name += 'Element';
     }
-    code += '''
+    code +=
+        '''
       QueryBuilder<${oi.dartName}, ${oi.dartName}, QAfterFilterCondition> $name(FilterQuery<${property.typeClassName}> q) {
         return QueryBuilder.apply(this, (query) {
           return query.object(q, r'${property.isarName}');
