@@ -31,35 +31,23 @@ class QueryFilter extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         child: Row(
           children: [
-            DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                isDense: true,
-                items: [
-                  for (final property in collection.idAndProperties)
-                    if (property.type != IsarType.object &&
-                        property.type != IsarType.objectList)
-                      DropdownMenuItem(
-                        value: property.name,
-                        child: Text(property.name),
-                      ),
-                ],
-                value: condition.property,
-                onChanged: (value) {
-                  if (value == null) return;
-                  final newProperty = collection.propertyOrId(value);
-                  onChanged(
-                    FilterCondition(
-                      type: FilterConditionType.equalTo,
-                      property: value,
-                      value1: newProperty.defaultEditingValue,
-                      value2: newProperty.defaultEditingValue,
-                      include1: false,
-                      include2: false,
-                      caseSensitive: false,
-                    ),
-                  );
-                },
-              ),
+            _SearchablePropertyPicker(
+              collection: collection,
+              selectedProperty: condition.property,
+              onSelected: (value) {
+                final newProperty = collection.propertyOrId(value);
+                onChanged(
+                  FilterCondition(
+                    type: FilterConditionType.equalTo,
+                    property: value,
+                    value1: newProperty.defaultEditingValue,
+                    value2: newProperty.defaultEditingValue,
+                    include1: false,
+                    include2: false,
+                    caseSensitive: false,
+                  ),
+                );
+              },
             ),
             const SizedBox(width: 20),
             DropdownButtonHideUnderline(
@@ -141,6 +129,150 @@ class QueryFilter extends StatelessWidget {
   }
 
   dynamic get value1 {}
+}
+
+class _SearchablePropertyPicker extends StatefulWidget {
+  const _SearchablePropertyPicker({
+    required this.collection,
+    required this.selectedProperty,
+    required this.onSelected,
+  });
+
+  final CollectionSchema<dynamic> collection;
+  final String selectedProperty;
+  final ValueChanged<String> onSelected;
+
+  @override
+  State<_SearchablePropertyPicker> createState() =>
+      _SearchablePropertyPickerState();
+}
+
+class _SearchablePropertyPickerState extends State<_SearchablePropertyPicker> {
+  List<PropertySchema> get _availableProperties {
+    final props = widget.collection.idAndProperties
+        .where(
+          (p) => p.type != IsarType.object && p.type != IsarType.objectList,
+        )
+        .toList();
+    props.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+    return props;
+  }
+
+  void _showSearchDialog(BuildContext context) {
+    final properties = _availableProperties;
+    showDialog<String>(
+      context: context,
+      builder: (context) {
+        var filter = '';
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            final filtered = properties
+                .where(
+                  (p) => p.name.toLowerCase().contains(filter.toLowerCase()),
+                )
+                .toList();
+
+            return AlertDialog(
+              title: const Text('Select Field'),
+              content: SizedBox(
+                width: 300,
+                height: 350,
+                child: Column(
+                  children: [
+                    TextField(
+                      autofocus: true,
+                      onChanged: (value) {
+                        setStateDialog(() {
+                          filter = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search field...',
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? const Center(child: Text('No fields found'))
+                          : ListView.builder(
+                              itemCount: filtered.length,
+                              itemBuilder: (context, index) {
+                                final prop = filtered[index];
+                                final isSelected =
+                                    prop.name == widget.selectedProperty;
+                                return ListTile(
+                                  dense: true,
+                                  title: Text(
+                                    prop.name,
+                                    style: TextStyle(
+                                      fontWeight: isSelected
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    prop.type.name,
+                                    style: const TextStyle(fontSize: 11),
+                                  ),
+                                  selected: isSelected,
+                                  onTap: () {
+                                    Navigator.of(context).pop(prop.name);
+                                  },
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    ).then((selected) {
+      if (!mounted) return;
+      if (selected != null && selected != widget.selectedProperty) {
+        widget.onSelected(selected);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: () => _showSearchDialog(context),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.selectedProperty,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_drop_down, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 extension on PropertySchema {

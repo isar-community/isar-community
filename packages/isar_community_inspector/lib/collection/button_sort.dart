@@ -17,6 +17,14 @@ class SortButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sortedProperties = properties
+        .where(
+          (property) =>
+              property.type != IsarType.object && !property.type.isList,
+        )
+        .toList()
+      ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -26,12 +34,11 @@ class SortButtons extends StatelessWidget {
             child: DropdownButton<String>(
               isDense: true,
               items: [
-                for (final property in properties)
-                  if (property.type != IsarType.object && !property.type.isList)
-                    DropdownMenuItem(
-                      value: property.name,
-                      child: Text(property.name),
-                    ),
+                for (final property in sortedProperties)
+                  DropdownMenuItem(
+                    value: property.name,
+                    child: Text(property.name),
+                  ),
               ],
               value: property,
               onChanged: (value) {
