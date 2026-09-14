@@ -46,3 +46,16 @@ FutureOr<void> initializeCoreBinary({
   bool download = false,
 }) =>
     unsupportedOnWeb();
+
+/// Converts a 64-bit hash to a web-safe integer within JavaScript's safe
+/// integer range. Use this when web support is implemented to ensure IDs
+/// are representable as JS numbers.
+int generateWebSafeId(int hash) {
+  const maxSafeInteger = 9007199254740991;
+  final unsignedHash = hash.toUnsigned(64);
+  final highBits = unsignedHash >> 32;
+  final lowBits = unsignedHash & 0xFFFFFFFF;
+  final mixedHash = highBits ^ lowBits;
+  final safeHash = (mixedHash % (maxSafeInteger - 1)) + 1;
+  return safeHash;
+}
