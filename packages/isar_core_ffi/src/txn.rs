@@ -48,6 +48,13 @@ pub unsafe extern "C" fn isar_txn_finish(txn: *mut CIsarTxn, commit: bool) -> i6
     }
 }
 
+/// Frees a transaction that was never finished. Used as the NativeFinalizer of async
+/// transactions, so a transaction whose isolate shuts down mid-way is rolled back.
+#[no_mangle]
+pub unsafe extern "C" fn isar_txn_free(txn: *mut CIsarTxn) {
+    drop(Box::from_raw(txn));
+}
+
 pub struct IsarTxnSend(IsarTxn<'static>);
 
 unsafe impl Send for IsarTxnSend {}
@@ -80,24 +87,38 @@ impl CIsarTxn {
         let (tx, rx): (Sender<AsyncJob>, Receiver<AsyncJob>) = mpsc::channel();
         let txn = Arc::new(Mutex::new(None));
         let txn_clone = txn.clone();
+        // `isar` comes from `Arc::into_raw` in `isar_instance_create`. Take an owned
+        // reference for as long as this worker can touch the instance: otherwise the
+        // instance's NativeFinalizer (`isar_instance_close`, run when the owning isolate
+        // shuts down) can free it while a job is still running here.
+        let instance = unsafe {
+            let ptr = isar as *const IsarInstance;
+            Arc::increment_strong_count(ptr);
+            Arc::from_raw(ptr)
+        };
         run_async(move || {
             let new_txn = isar.begin_txn(write, silent);
             match new_txn {
                 Ok(new_txn) => {
                     txn_clone.lock().unwrap().replace(IsarTxnSend(new_txn));
                     dart_post_int(port, 0);
-                    loop {
-                        let (job, stop) = rx.recv().unwrap();
+                    // The sender is dropped without a final job when the Dart side goes
+                    // away mid-transaction (see `isar_txn_free`).
+                    while let Ok((job, stop)) = rx.recv() {
                         job();
                         if stop {
                             break;
                         }
                     }
+                    // Roll back a transaction that was never finished, releasing the
+                    // write lock, before the instance reference goes away.
+                    txn_clone.lock().unwrap().take();
                 }
                 Err(e) => {
                     dart_post_int(port, Err(e).into_dart_result_code());
                 }
             }
+            drop(instance);
         });
 
         CIsarTxn::Async { tx, port, txn }

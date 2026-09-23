@@ -9,19 +9,26 @@ import 'package:isar_community/src/native/bindings.dart';
 import 'package:isar_community/src/native/isar_core.dart';
 
 /// @nodoc
-class Txn extends Transaction {
+class Txn extends Transaction implements Finalizable {
   /// @nodoc
   Txn.sync(Isar isar, this.ptr, bool write) : super(isar, true, write);
 
   /// @nodoc
   Txn.async(Isar isar, this.ptr, bool write, Stream<void> stream)
       : super(isar, false, write) {
+    // If the isolate shuts down before the transaction finishes, the native
+    // side has to roll it back; otherwise its worker thread keeps the write
+    // lock.
+    _finalizer?.attach(this, ptr.cast(), detach: this);
     _completers = Queue();
     _portSubscription = stream.listen(
       (_) => _completers.removeFirst().complete(),
       onError: (Object e) => _completers.removeFirst().completeError(e),
     );
   }
+
+  static final _finalizer =
+      isarTxnFree != null ? NativeFinalizer(isarTxnFree!) : null;
 
   @override
   bool active = true;
@@ -81,6 +88,7 @@ class Txn extends Transaction {
   @override
   Future<void> commit() async {
     active = false;
+    _finalizer?.detach(this);
     IC.isar_txn_finish(ptr, true);
     await wait();
     unawaited(_portSubscription!.cancel());
@@ -95,6 +103,7 @@ class Txn extends Transaction {
   @override
   Future<void> abort() async {
     active = false;
+    _finalizer?.detach(this);
     IC.isar_txn_finish(ptr, false);
     await wait();
     unawaited(_portSubscription!.cancel());

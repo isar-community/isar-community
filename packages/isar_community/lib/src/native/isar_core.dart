@@ -48,6 +48,10 @@ typedef FinalizerFunction = void Function(Pointer<Void> token);
 late final Pointer<NativeFinalizerFunction> isarClose;
 late final Pointer<NativeFinalizerFunction> isarQueryFree;
 
+/// Rolls back an async transaction whose isolate shut down before it finished.
+/// Null when the loaded core predates `isar_txn_free`.
+Pointer<NativeFinalizerFunction>? isarTxnFree;
+
 FutureOr<void> initializeCoreBinary({
   Map<Abi, String> libraries = const {},
   bool download = false,
@@ -117,6 +121,12 @@ void _initializePath(String? libraryPath) {
   }
   isarClose = dylib.lookup('isar_instance_close');
   isarQueryFree = dylib.lookup('isar_q_free');
+  try {
+    isarTxnFree = dylib.lookup('isar_txn_free');
+  } catch (_) {
+    // Older cores do not export this symbol; transactions then get no
+    // finalizer.
+  }
   _isarInitialized = true;
 }
 

@@ -1,4 +1,5 @@
 @TestOn('vm')
+import 'dart:async';
 import 'dart:isolate';
 
 import 'package:isar_community/isar.dart';
@@ -50,6 +51,23 @@ Future<void> _isolateFunc(SendPort port) async {
   port.send(true);
 }
 
+Future<void> _abandonWriteTxn(SendPort port) async {
+  final isar = await openTempIsar(
+    [TestModelSchema],
+    name: 'abandon',
+    directory: '',
+  );
+
+  unawaited(
+    isar.writeTxn(() async {
+      await isar.testModels.put(_obj1);
+      port.send(true);
+      // Never finishes: the isolate is killed while the transaction is open.
+      await Completer<void>().future;
+    }),
+  );
+}
+
 void main() {
   isarTest('Isolate test', () async {
     final isar = await openTempIsar([TestModelSchema], name: 'test');
@@ -66,5 +84,22 @@ void main() {
     await qEqual(isar.testModels.where(), [_obj1, _obj3]);
 
     expect(await isar.close(deleteFromDisk: true), true);
+  });
+
+  isarTestAsync('Isolate killed during an async write txn', () async {
+    final isar = await openTempIsar([TestModelSchema], name: 'abandon');
+
+    final port = ReceivePort();
+    final isolate = await Isolate.spawn(_abandonWriteTxn, port.sendPort);
+    await port.first;
+    isolate.kill(priority: Isolate.immediate);
+
+    // The abandoned transaction must be rolled back and release the write
+    // lock, otherwise this write waits forever.
+    await isar
+        .writeTxn(() => isar.testModels.put(_obj2))
+        .timeout(const Duration(seconds: 10));
+
+    await qEqual(isar.testModels.where(), [_obj2]);
   });
 }
