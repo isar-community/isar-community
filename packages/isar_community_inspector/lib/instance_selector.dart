@@ -166,7 +166,7 @@ class SelectedInstanceButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: Row(
               children: [
-                Icon(
+                FaIcon(
                   FontAwesomeIcons.database,
                   size: 25,
                   color: theme.colorScheme.onSecondaryContainer,
@@ -197,8 +197,8 @@ class SelectedInstanceButton extends StatelessWidget {
                   const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(FontAwesomeIcons.chevronUp, size: 12),
-                      Icon(FontAwesomeIcons.chevronDown, size: 12),
+                      FaIcon(FontAwesomeIcons.chevronUp, size: 12),
+                      FaIcon(FontAwesomeIcons.chevronDown, size: 12),
                     ],
                   ),
               ],
