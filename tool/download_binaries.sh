@@ -14,5 +14,6 @@ unzip -o packages/isar_community_flutter_libs/ios/isar_ios.xcframework.zip -d pa
 rm packages/isar_community_flutter_libs/ios/isar_ios.xcframework.zip
 
 curl "${binariesUrl}/libisar_macos.dylib" -o packages/isar_community_flutter_libs/macos/libisar.dylib --create-dirs -L -f
-curl "${binariesUrl}/libisar_linux_x64.so" -o packages/isar_community_flutter_libs/linux/libisar.so --create-dirs -L -f
+curl "${binariesUrl}/libisar_linux_x64.so" -o packages/isar_community_flutter_libs/linux/libisar.x64.so --create-dirs -L -f
+curl "${binariesUrl}/libisar_linux_arm64.so" -o packages/isar_community_flutter_libs/linux/libisar.aarch64.so --create-dirs -L -f
 curl "${binariesUrl}/isar_windows_x64.dll" -o packages/isar_community_flutter_libs/windows/libisar.dll --create-dirs -L -f

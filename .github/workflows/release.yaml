@@ -52,6 +52,9 @@ jobs:
           - os: ubuntu-24.04
             artifact_name: libisar_linux_x64.so
             script: build_linux.sh x64
+          - os: ubuntu-24.04-arm
+            artifact_name: libisar_linux_arm64.so
+            script: build_linux.sh aarch64
           - os: macos-15
             artifact_name: libisar_macos.dylib
             script: build_macos.sh
