@@ -52,7 +52,9 @@ pub unsafe extern "C" fn isar_txn_finish(txn: *mut CIsarTxn, commit: bool) -> i6
 /// transactions, so a transaction whose isolate shuts down mid-way is rolled back.
 #[no_mangle]
 pub unsafe extern "C" fn isar_txn_free(txn: *mut CIsarTxn) {
-    drop(Box::from_raw(txn));
+    if !txn.is_null() {
+        drop(Box::from_raw(txn));
+    }
 }
 
 pub struct IsarTxnSend(IsarTxn<'static>);
