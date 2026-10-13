@@ -4,8 +4,11 @@
 part of isar;
 
 abstract class _IsarConnect {
-  static const Map<ConnectAction,
-      Future<dynamic> Function(Map<String, dynamic> _)> _handlers = {
+  static const Map<
+    ConnectAction,
+    Future<dynamic> Function(Map<String, dynamic> _)
+  >
+  _handlers = {
     ConnectAction.getSchema: _getSchema,
     ConnectAction.listInstances: _listInstances,
     ConnectAction.watchInstance: _watchInstance,
@@ -94,7 +97,13 @@ abstract class _IsarConnect {
     });
   }
 
-  static Future<dynamic> _getSchema(Map<String, dynamic> _) async {
+  static Future<dynamic> _getSchema(Map<String, dynamic> params) async {
+    if (params.containsKey('instance')) {
+      final isar = Isar.getInstance(params['instance'] as String);
+      if (isar != null) {
+        return isar._collections.values.map((e) => e.schema.toJson()).toList();
+      }
+    }
     return _schemas!.map((e) => e.toJson()).toList();
   }
 
@@ -154,8 +163,11 @@ abstract class _IsarConnect {
     final cQuery = ConnectQuery.fromJson(params);
     final instance = Isar.getInstance(cQuery.instance)!;
 
-    final links =
-        _schemas!.firstWhere((e) => e.name == cQuery.collection).links.values;
+    final links = instance
+        .getCollectionByNameInternal(cQuery.collection)!
+        .schema
+        .links
+        .values;
 
     final query = cQuery.toQuery();
     params.remove('limit');
@@ -185,16 +197,18 @@ abstract class _IsarConnect {
       for (final object in objects) {
         for (final link in links) {
           final target = instance.getCollectionByNameInternal(link.target)!;
-          final links = await target.buildQuery<dynamic>(
-            whereClauses: [
-              LinkWhereClause(
-                linkCollection: source.name,
-                linkName: link.name,
-                id: object[source.schema.idName] as int,
-              ),
-            ],
-            limit: link.single ? 1 : null,
-          ).exportJson();
+          final links = await target
+              .buildQuery<dynamic>(
+                whereClauses: [
+                  LinkWhereClause(
+                    linkCollection: source.name,
+                    linkName: link.name,
+                    id: object[source.schema.idName] as int,
+                  ),
+                ],
+                limit: link.single ? 1 : null,
+              )
+              .exportJson();
 
           if (link.single) {
             object[link.name] = links.isEmpty ? null : links.first;
