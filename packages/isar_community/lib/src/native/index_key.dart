@@ -164,6 +164,7 @@ void _addKeyValue(
           longListPtr[i] = value[i].longValue;
         }
         IC.isar_key_add_long_list_hash(keyPtr, longListPtr, value.length);
+        malloc.free(longListPtr);
       }
       break;
     case IsarType.stringList:
@@ -184,6 +185,7 @@ void _addKeyValue(
         for (var i = 0; i < value.length; i++) {
           _freeStr(stringListPtr[i]);
         }
+        malloc.free(stringListPtr);
       }
       break;
     case IsarType.object:

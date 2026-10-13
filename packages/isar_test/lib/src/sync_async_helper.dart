@@ -86,7 +86,7 @@ extension TIsarCollection<OBJ> on IsarCollection<OBJ> {
     if (syncTest) {
       return SynchronousFuture(putSync(object, saveLinks: saveLinks));
     } else {
-      return put(object);
+      return put(object, saveLinks: saveLinks);
     }
   }
 
@@ -94,7 +94,7 @@ extension TIsarCollection<OBJ> on IsarCollection<OBJ> {
     if (syncTest) {
       return SynchronousFuture(putAllSync(objects, saveLinks: saveLinks));
     } else {
-      return putAll(objects);
+      return putAll(objects, saveLinks: saveLinks);
     }
   }
 
