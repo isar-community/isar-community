@@ -132,7 +132,7 @@ extension PropertyElementX on PropertyInducingElement {
 
 extension ElementX on Element {
   String get isarName {
-    final ann = _nameChecker.firstAnnotationOfExact(this);
+    final ann = _nameChecker.firstAnnotationOfExact(nonSynthetic);
     late String name;
     if (ann == null) {
       name = displayName;
