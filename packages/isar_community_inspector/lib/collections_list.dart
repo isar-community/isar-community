@@ -30,51 +30,55 @@ class CollectionsList extends StatelessWidget {
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 10),
-          child: ElevatedButton(
-            style: collection.name == selectedCollection
-                ? ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    foregroundColor: theme.colorScheme.onPrimaryContainer,
-                  )
-                : null,
-            onPressed: () {
-              onSelected(collection.name);
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(
-                left: 25,
-                right: 10,
-                top: 12,
-                bottom: 12,
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      collection.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        overflow: TextOverflow.ellipsis,
+          child: Tooltip(
+            message: collection.name,
+            waitDuration: Duration.zero,
+            child: ElevatedButton(
+              style: collection.name == selectedCollection
+                  ? ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                    )
+                  : null,
+              onPressed: () {
+                onSelected(collection.name);
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 25,
+                  right: 10,
+                  top: 12,
+                  bottom: 12,
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        collection.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        info?.count.toString() ?? 'loading',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _formatSize(info?.size ?? 0),
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          info?.count.toString() ?? 'loading',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          _formatSize(info?.size ?? 0),
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
