@@ -11,12 +11,12 @@ class ConnectedLayout extends StatefulWidget {
     super.key,
     required this.client,
     required this.instances,
-    required this.collections,
+    required this.schemasMap,
   });
 
   final ConnectClient client;
   final List<String> instances;
-  final List<CollectionSchema<dynamic>> collections;
+  final Map<String, List<CollectionSchema<dynamic>>> schemasMap;
 
   @override
   State<ConnectedLayout> createState() => _ConnectedLayoutState();
@@ -24,14 +24,16 @@ class ConnectedLayout extends StatefulWidget {
 
 class _ConnectedLayoutState extends State<ConnectedLayout> {
   late String selectedInstance;
-  late String selectedCollection = widget.collections.first.name;
+  late String selectedCollection;
   late StreamSubscription<void> infoSubscription;
 
   @override
   void initState() {
     _selectInstance(widget.instances.first);
     infoSubscription = widget.client.collectionInfoChanged.listen((_) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     super.initState();
   }
@@ -52,11 +54,17 @@ class _ConnectedLayoutState extends State<ConnectedLayout> {
 
   void _selectInstance(String instance) {
     selectedInstance = instance;
+    final schemas = widget.schemasMap[instance];
+    selectedCollection = schemas != null && schemas.isNotEmpty
+        ? schemas.first.name
+        : '';
     widget.client.watchInstance(instance);
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentSchemas =
+        widget.schemasMap[selectedInstance] ?? <CollectionSchema<dynamic>>[];
     return Padding(
       padding: const EdgeInsets.all(25),
       child: Row(
@@ -72,7 +80,7 @@ class _ConnectedLayoutState extends State<ConnectedLayout> {
                   _selectInstance(instance);
                 });
               },
-              collections: widget.collections,
+              collections: currentSchemas,
               collectionInfo: widget.client.collectionInfo,
               selectedCollection: selectedCollection,
               onCollectionSelected: (collection) {
@@ -90,7 +98,7 @@ class _ConnectedLayoutState extends State<ConnectedLayout> {
               collection: selectedCollection,
               client: widget.client,
               schemas: {
-                for (final schema in widget.collections) ...{
+                for (final schema in currentSchemas) ...{
                   schema.name: schema,
                   for (final embedded in schema.embeddedSchemas.values) ...{
                     embedded.name: embedded,
