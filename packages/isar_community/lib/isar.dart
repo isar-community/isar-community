@@ -6,14 +6,16 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:isar_community/src/isar_connect_api.dart';
-import 'package:isar_community/src/native/isar_core.dart'
-    if (dart.library.html) 'package:isar_community/src/web/isar_web.dart';
-import 'package:isar_community/src/native/isar_link_impl.dart'
+import 'package:isar_community/src/stub/isar_link_impl.dart'
+    if (dart.library.ffi) 'package:isar_community/src/native/isar_link_impl.dart'
     if (dart.library.html) 'package:isar_community/src/web/isar_link_impl.dart';
-import 'package:isar_community/src/native/open.dart'
+import 'package:isar_community/src/stub/open.dart'
+    if (dart.library.ffi) 'package:isar_community/src/native/open.dart'
     if (dart.library.html) 'package:isar_community/src/web/open.dart';
-import 'package:isar_community/src/native/split_words.dart'
-    if (dart.library.html) 'package:isar_community/src/web/split_words.dart';
+import 'package:isar_community/src/web/isar_web.dart'
+    if (dart.library.ffi) 'package:isar_community/src/native/isar_core.dart';
+import 'package:isar_community/src/web/split_words.dart'
+    if (dart.library.ffi) 'package:isar_community/src/native/split_words.dart';
 import 'package:meta/meta.dart';
 import 'package:meta/meta_meta.dart';
 
