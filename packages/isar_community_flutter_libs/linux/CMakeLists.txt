@@ -18,8 +18,14 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter)
 target_link_libraries(${PLUGIN_NAME} PRIVATE PkgConfig::GTK)
 
+# Keep the existing x64 filename; ARM64 is distributed alongside it.
+set(ISAR_LIBRARY "libisar.so")
+if(FLUTTER_TARGET_PLATFORM STREQUAL "linux-arm64")
+  set(ISAR_LIBRARY "libisar.aarch64.so")
+endif()
+
 # List of absolute paths to libraries that should be bundled with the plugin
 set(isar_community_flutter_libs_bundled_libraries
-  "${CMAKE_CURRENT_SOURCE_DIR}/libisar.so"
+  "${CMAKE_CURRENT_SOURCE_DIR}/${ISAR_LIBRARY}"
   PARENT_SCOPE
 )
