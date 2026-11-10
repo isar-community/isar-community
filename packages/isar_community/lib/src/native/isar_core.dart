@@ -47,6 +47,7 @@ late final IsarCoreBindings IC;
 typedef FinalizerFunction = void Function(Pointer<Void> token);
 late final Pointer<NativeFinalizerFunction> isarClose;
 late final Pointer<NativeFinalizerFunction> isarQueryFree;
+late final Pointer<NativeFinalizerFunction> isarTxnAbandon;
 
 FutureOr<void> initializeCoreBinary({
   Map<Abi, String> libraries = const {},
@@ -126,6 +127,7 @@ void _initializePath(String? libraryPath) {
   }
   isarClose = dylib.lookup('isar_instance_close');
   isarQueryFree = dylib.lookup('isar_q_free');
+  isarTxnAbandon = dylib.lookup('isar_txn_abandon');
   _isarInitialized = true;
 }
 

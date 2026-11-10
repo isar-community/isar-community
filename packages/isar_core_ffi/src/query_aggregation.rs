@@ -1,4 +1,5 @@
 use crate::filter::get_property;
+use crate::query::retain_query;
 use crate::txn::CIsarTxn;
 use isar_core::collection::IsarCollection;
 use isar_core::error::Result;
@@ -170,7 +171,7 @@ unsafe impl Send for AggregationResultSend {}
 #[no_mangle]
 pub unsafe extern "C" fn isar_q_aggregate(
     collection: &'static IsarCollection,
-    query: &'static Query,
+    query: *const Query,
     txn: &mut CIsarTxn,
     operation: u8,
     property_id: u64,
@@ -178,6 +179,7 @@ pub unsafe extern "C" fn isar_q_aggregate(
 ) -> i64 {
     let op = AggregationOp::from_u8(operation);
     let result = AggregationResultSend(result);
+    let query = retain_query(query);
     isar_try_txn!(txn, move |txn| {
         let result = result;
         let property = if op != AggregationOp::Count {
@@ -185,7 +187,7 @@ pub unsafe extern "C" fn isar_q_aggregate(
         } else {
             None
         };
-        let aggregate_result = aggregate(query, txn, op, property)?;
+        let aggregate_result = aggregate(&query, txn, op, property)?;
         result.0.write(Box::into_raw(Box::new(aggregate_result)));
         Ok(())
     })

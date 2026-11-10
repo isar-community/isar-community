@@ -99,6 +99,18 @@ jobs:
         run: flutter test -j 1
         working-directory: packages/isar_test
 
+  rust_test:
+    name: Rust Test
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare Build
+        uses: ./.github/actions/prepare-build
+      - name: Display Rust version
+        run: rustc --version && cargo --version
+      - name: Run Rust Unit tests
+        run: cargo test
+
   valgrind:
     name: Valgrind
     runs-on: ubuntu-24.04

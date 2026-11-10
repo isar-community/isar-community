@@ -2076,6 +2076,43 @@ class IsarCoreBindings {
   late final _isar_txn_finish = _isar_txn_finishPtr
       .asFunction<int Function(ffi.Pointer<CIsarTxn>, bool)>();
 
+  /// Returns null for a sync transaction. Dart attaches a native finalizer that
+  /// calls isar_txn_abandon to the result and then calls isar_txn_watch_start.
+  /// In that order no transaction counts as watched without a finalizer.
+  ffi.Pointer<CIsarTxnWatch> isar_txn_watch(ffi.Pointer<CIsarTxn> txn) {
+    return _isar_txn_watch(txn);
+  }
+
+  late final _isar_txn_watchPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<CIsarTxnWatch> Function(
+            ffi.Pointer<CIsarTxn>,
+          )>>('isar_txn_watch');
+  late final _isar_txn_watch = _isar_txn_watchPtr
+      .asFunction<ffi.Pointer<CIsarTxnWatch> Function(ffi.Pointer<CIsarTxn>)>();
+
+  void isar_txn_watch_start(ffi.Pointer<CIsarTxnWatch> watch) {
+    return _isar_txn_watch_start(watch);
+  }
+
+  late final _isar_txn_watch_startPtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<CIsarTxnWatch>)>>(
+      'isar_txn_watch_start');
+  late final _isar_txn_watch_start = _isar_txn_watch_startPtr
+      .asFunction<void Function(ffi.Pointer<CIsarTxnWatch>)>();
+
+  /// Frees the watch. A transaction that is still open is ended and no longer
+  /// keeps its instance.
+  void isar_txn_abandon(ffi.Pointer<CIsarTxnWatch> watch) {
+    return _isar_txn_abandon(watch);
+  }
+
+  late final _isar_txn_abandonPtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<CIsarTxnWatch>)>>(
+      'isar_txn_abandon');
+  late final _isar_txn_abandon = _isar_txn_abandonPtr
+      .asFunction<void Function(ffi.Pointer<CIsarTxnWatch>)>();
+
   ffi.Pointer<CWatchHandle> isar_watch_collection(
     ffi.Pointer<CIsarInstance> isar,
     ffi.Pointer<CIsarCollection> collection,
@@ -2180,6 +2217,8 @@ class CObjectSet extends ffi.Struct {
 class CIsarCollection extends ffi.Opaque {}
 
 class CIsarTxn extends ffi.Opaque {}
+
+class CIsarTxnWatch extends ffi.Opaque {}
 
 class CIndexKey extends ffi.Opaque {}
 
