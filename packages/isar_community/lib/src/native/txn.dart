@@ -9,7 +9,7 @@ import 'package:isar_community/src/native/bindings.dart';
 import 'package:isar_community/src/native/isar_core.dart';
 
 /// @nodoc
-class Txn extends Transaction {
+class Txn extends Transaction implements Finalizable {
   /// @nodoc
   Txn.sync(Isar isar, this.ptr, bool write) : super(isar, true, write);
 
@@ -21,7 +21,17 @@ class Txn extends Transaction {
       (_) => _completers.removeFirst().complete(),
       onError: (Object e) => _completers.removeFirst().completeError(e),
     );
+
+    // The core learns from the finalizer that nobody is left to finish this
+    // transaction: its isolate is gone, or this object was collected. The
+    // watch is started last, so it never counts on a finalizer that is not
+    // attached.
+    final watch = IC.isar_txn_watch(ptr);
+    _finalizer.attach(this, watch.cast());
+    IC.isar_txn_watch_start(watch);
   }
+
+  static final _finalizer = NativeFinalizer(isarTxnAbandon);
 
   @override
   bool active = true;

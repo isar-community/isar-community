@@ -74,7 +74,7 @@ const AssetSchema = CollectionSchema(
   getId: _assetGetId,
   getLinks: _assetGetLinks,
   attach: _assetAttach,
-  version: '3.4.0',
+  version: '3.4.1',
 );
 
 int _assetEstimateSize(

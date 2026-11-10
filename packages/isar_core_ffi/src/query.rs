@@ -8,6 +8,7 @@ use isar_core::query::filter::Filter;
 use isar_core::query::query_builder::QueryBuilder;
 use isar_core::query::{Query, Sort};
 use std::os::raw::c_char;
+use std::sync::Arc;
 
 #[no_mangle]
 pub extern "C" fn isar_qb_create(collection: &IsarCollection) -> *mut QueryBuilder {
@@ -119,21 +120,29 @@ pub unsafe extern "C" fn isar_qb_set_offset_limit(
 #[no_mangle]
 pub unsafe extern "C" fn isar_qb_build(builder: *mut QueryBuilder) -> *mut Query {
     let query = Box::from_raw(builder).build();
-    Box::into_raw(Box::new(query))
+    Arc::into_raw(Arc::new(query)) as *mut Query
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn isar_q_free(query: *mut Query) {
-    let _ = Box::from_raw(query);
+    drop(Arc::from_raw(query as *const Query));
+}
+
+/// A finalizer frees the query when its isolate dies, even while a job still
+/// runs it on the pool. The job holds this to keep the query until it is done.
+pub(crate) unsafe fn retain_query(query: *const Query) -> Arc<Query> {
+    Arc::increment_strong_count(query);
+    Arc::from_raw(query)
 }
 
 #[no_mangle]
 pub unsafe extern "C" fn isar_q_find(
-    query: &'static Query,
+    query: *const Query,
     txn: &mut CIsarTxn,
     result: &'static mut CObjectSet,
     limit: u32,
 ) -> i64 {
+    let query = retain_query(query);
     isar_try_txn!(txn, move |txn| {
         let mut objects = vec![];
         let mut count = 0;
@@ -153,7 +162,7 @@ pub unsafe extern "C" fn isar_q_find(
 
 #[no_mangle]
 pub unsafe extern "C" fn isar_q_delete(
-    query: &'static Query,
+    query: *const Query,
     collection: &'static IsarCollection,
     txn: &mut CIsarTxn,
     limit: u32,
@@ -161,6 +170,7 @@ pub unsafe extern "C" fn isar_q_delete(
 ) -> i64 {
     let limit = limit as usize;
     let count = UintSend(count);
+    let query = retain_query(query);
     isar_try_txn!(txn, move |txn| {
         let mut ids_to_delete = vec![];
         query.find_while(txn, |id, _| {
@@ -183,7 +193,7 @@ unsafe impl Send for JsonLen {}
 
 #[no_mangle]
 pub unsafe extern "C" fn isar_q_export_json(
-    query: &'static Query,
+    query: *const Query,
     collection: &'static IsarCollection,
     txn: &mut CIsarTxn,
     id_name: *const c_char,
@@ -193,6 +203,7 @@ pub unsafe extern "C" fn isar_q_export_json(
     let id_name = from_c_str(id_name).unwrap();
     let json = JsonBytes(json_bytes);
     let json_length = JsonLen(json_length);
+    let query = retain_query(query);
     isar_try_txn!(txn, move |txn| {
         let json = json;
         let json_length = json_length;

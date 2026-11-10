@@ -9,18 +9,29 @@ use crate::watch::change_set::ChangeSet;
 use crate::watch::isar_watchers::{IsarWatchers, WatcherModifier};
 use crate::watch::watcher::WatcherCallback;
 use crate::watch::WatchHandle;
-use crossbeam_channel::{unbounded, Sender};
+use crossbeam_channel::{bounded, unbounded, Receiver, Sender};
 use intmap::IntMap;
 use once_cell::sync::Lazy;
 use std::fs::remove_file;
 use std::fs::{self, metadata};
 use std::path::PathBuf;
-use std::sync::atomic::{AtomicU64, Ordering};
-use std::sync::{Arc, Mutex, RwLock};
+use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex, RwLock, RwLockWriteGuard};
+use std::thread::sleep;
+use std::time::{Duration, Instant};
 use xxhash_rust::xxh3::xxh3_64;
 
 static INSTANCES: Lazy<RwLock<IntMap<Arc<IsarInstance>>>> =
     Lazy::new(|| RwLock::new(IntMap::new()));
+
+// Held by an open from start to end. Opens wait for each other here, so that
+// INSTANCES is free while an environment is opened.
+static OPENING: Mutex<()> = Mutex::new(());
+
+// How long an open with another schema waits for an instance that only work
+// on the pool keeps open. Debug builds, which only tests use, wait less.
+const LINGERING_INSTANCE_WAIT: Duration =
+    Duration::from_secs(if cfg!(debug_assertions) { 1 } else { 10 });
 
 static WATCHER_ID: AtomicU64 = AtomicU64::new(0);
 
@@ -39,6 +50,18 @@ pub struct IsarInstance {
     env: Env,
     watchers: Mutex<IsarWatchers>,
     watcher_modifier_sender: Sender<WatcherModifier>,
+
+    // Handles returned by open() and not closed yet. Only changes under the
+    // INSTANCES lock.
+    open_handles: AtomicUsize,
+    // Replaced when the last handle is closed, which disconnects every receiver
+    // handed out before.
+    orphan_signal: Mutex<(Sender<()>, Receiver<()>)>,
+    // The last handle asked for the files to be deleted. They go with the last
+    // reference, which may be work that outlives the handle.
+    delete_on_close: AtomicBool,
+    // Name and hash of every collection schema the instance was opened with.
+    opened_with: Vec<(String, u64)>,
 }
 
 impl IsarInstance {
@@ -50,30 +73,70 @@ impl IsarInstance {
         relaxed_durability: bool,
         compact_condition: Option<CompactCondition>,
     ) -> Result<Arc<Self>> {
-        let mut lock = INSTANCES.write().unwrap();
+        let _opening = OPENING.lock().unwrap();
         let instance_id = xxh3_64(name.as_bytes());
-        if let Some(instance) = lock.get(instance_id) {
-            Ok(instance.clone())
-        } else {
-            if let Some(dir) = dir {
-                let new_instance = Self::open_internal(
-                    name,
-                    dir,
-                    instance_id,
-                    schema,
-                    max_size_mib,
-                    relaxed_durability,
-                    compact_condition,
-                )?;
-                let new_instance = Arc::new(new_instance);
-                lock.insert(instance_id, new_instance.clone());
-                Ok(new_instance)
-            } else {
-                Err(IsarError::IllegalArg {
-                    message: "Please provide a valid directory.".to_string(),
-                })
+        let waiting_since = Instant::now();
+        loop {
+            let lock = INSTANCES.write().unwrap();
+            let Some(instance) = lock.get(instance_id) else {
+                break;
+            };
+            // Without a handle, only work on the pool keeps the instance open,
+            // with the schema of an earlier open. It closes when that work is
+            // done, and the file is then opened and migrated as usual.
+            if instance.open_handles.load(Ordering::SeqCst) == 0
+                && !instance.was_opened_with(&schema)?
+            {
+                if waiting_since.elapsed() > LINGERING_INSTANCE_WAIT {
+                    return Err(IsarError::SchemaMismatch {});
+                }
+                drop(lock);
+                sleep(Duration::from_millis(10));
+                continue;
             }
+            instance.open_handles.fetch_add(1, Ordering::SeqCst);
+            // The database is in use again.
+            instance.delete_on_close.store(false, Ordering::SeqCst);
+            return Ok(instance.clone());
         }
+
+        if let Some(dir) = dir {
+            let new_instance = Self::open_internal(
+                name,
+                dir,
+                instance_id,
+                schema,
+                max_size_mib,
+                relaxed_durability,
+                compact_condition,
+            )?;
+            let new_instance = Arc::new(new_instance);
+            new_instance.open_handles.fetch_add(1, Ordering::SeqCst);
+            INSTANCES
+                .write()
+                .unwrap()
+                .insert(instance_id, new_instance.clone());
+            Ok(new_instance)
+        } else {
+            Err(IsarError::IllegalArg {
+                message: "Please provide a valid directory.".to_string(),
+            })
+        }
+    }
+
+    fn schema_hashes(schema: &Schema) -> Result<Vec<(String, u64)>> {
+        schema
+            .collections
+            .iter()
+            .map(|col| Ok((col.name.clone(), xxh3_64(&col.to_json_bytes()?))))
+            .collect()
+    }
+
+    // Whether every collection of the schema is one this instance was opened
+    // with, unchanged.
+    fn was_opened_with(&self, schema: &Schema) -> Result<bool> {
+        let requested = Self::schema_hashes(schema)?;
+        Ok(requested.iter().all(|col| self.opened_with.contains(col)))
     }
 
     fn get_isar_path(name: &str, dir: &str) -> String {
@@ -109,6 +172,8 @@ impl IsarInstance {
         compact_condition: Option<CompactCondition>,
     ) -> Result<Self> {
         let isar_file = Self::get_isar_path(name, dir);
+        // Before the migration merges what the file holds into the schema.
+        let opened_with = Self::schema_hashes(&schema)?;
 
         Self::move_old_database(name, dir, &isar_file);
 
@@ -158,6 +223,10 @@ impl IsarInstance {
             instance_id,
             watchers: Mutex::new(IsarWatchers::new(rx)),
             watcher_modifier_sender: tx,
+            open_handles: AtomicUsize::new(0),
+            orphan_signal: Mutex::new(bounded(0)),
+            delete_on_close: AtomicBool::new(false),
+            opened_with: opened_with.clone(),
         };
 
         if let Some(compact_condition) = compact_condition {
@@ -165,7 +234,7 @@ impl IsarInstance {
             if let Some(instance) = instance {
                 Ok(instance)
             } else {
-                Self::open_internal(
+                let mut instance = Self::open_internal(
                     name,
                     dir,
                     instance_id,
@@ -173,7 +242,10 @@ impl IsarInstance {
                     max_size_mib,
                     relaxed_durability,
                     None,
-                )
+                )?;
+                // The schema passed on is the merged one.
+                instance.opened_with = opened_with;
+                Ok(instance)
             }
         } else {
             Ok(instance)
@@ -316,25 +388,60 @@ impl IsarInstance {
         )
     }
 
-    fn close_internal(self: Arc<Self>, delete_from_disk: bool) -> bool {
-        // Check whether all other references are gone
-        if Arc::strong_count(&self) == 2 {
-            let mut lock = INSTANCES.write().unwrap();
-            // Check again to make sure there are no new references
-            if Arc::strong_count(&self) == 2 {
-                lock.remove(self.instance_id);
+    /// A channel that disconnects once every handle returned by open() has been
+    /// closed. Work that outlives its handle watches it to learn that nobody is
+    /// left to finish it.
+    pub fn orphan_signal(&self) -> Receiver<()> {
+        self.orphan_signal.lock().unwrap().1.clone()
+    }
 
-                if delete_from_disk {
-                    let mut path = Self::get_isar_path(&self.name, &self.dir);
-                    drop(self);
-                    let _ = remove_file(&path);
-                    path.push_str(".lock");
-                    let _ = remove_file(&path);
-                }
-                return true;
+    fn close_internal(self: Arc<Self>, delete_from_disk: bool) -> bool {
+        let instances = INSTANCES.write().unwrap();
+        let handles_left = self
+            .open_handles
+            .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |handles| {
+                handles.checked_sub(1)
+            })
+            .map_or(0, |handles| handles - 1);
+        if handles_left == 0 {
+            *self.orphan_signal.lock().unwrap() = bounded(0);
+            // With another handle open the database stays, as its files do.
+            if delete_from_disk {
+                self.delete_on_close.store(true, Ordering::SeqCst);
             }
         }
-        false
+        self.drop_reference(instances)
+    }
+
+    fn drop_reference(
+        self: Arc<Self>,
+        mut instances: RwLockWriteGuard<IntMap<Arc<IsarInstance>>>,
+    ) -> bool {
+        // INSTANCES holds one reference and self is another. The count is read
+        // and self is dropped under the lock, so two callers cannot both
+        // conclude that the other one keeps the instance open.
+        if Arc::strong_count(&self) > 2 {
+            drop(self);
+            return false;
+        }
+
+        instances.remove(self.instance_id);
+        let delete_from_disk = self.delete_on_close.load(Ordering::SeqCst);
+        let mut path = Self::get_isar_path(&self.name, &self.dir);
+        drop(self);
+        if delete_from_disk {
+            let _ = remove_file(&path);
+            path.push_str(".lock");
+            let _ = remove_file(&path);
+        }
+        true
+    }
+
+    /// Gives up a reference that kept the instance open without being a handle.
+    /// The instance is closed if nothing else holds it.
+    pub fn release(self: Arc<Self>) -> bool {
+        let instances = INSTANCES.write().unwrap();
+        self.drop_reference(instances)
     }
 
     pub fn close(self: Arc<Self>) -> bool {

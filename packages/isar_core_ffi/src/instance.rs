@@ -3,6 +3,7 @@ use crate::error::DartErrCode;
 use crate::from_c_str;
 use crate::txn::run_async;
 use crate::txn::CIsarTxn;
+use crate::txn::InstanceRef;
 use crate::CharsSend;
 use isar_core::collection::IsarCollection;
 use isar_core::error::{illegal_arg, Result};
@@ -28,6 +29,43 @@ pub unsafe extern "C" fn isar_mdbx_version() -> *const c_char {
     MDBX_VERSION.as_ptr() as *const c_char
 }
 
+#[allow(clippy::too_many_arguments)]
+unsafe fn open_instance(
+    name: *const c_char,
+    path: *const c_char,
+    schema_json: *const c_char,
+    max_size_mib: i64,
+    relaxed_durability: bool,
+    compact_min_file_size: u32,
+    compact_min_bytes: u32,
+    compact_min_ratio: f64,
+) -> Result<*const IsarInstance> {
+    let name = from_c_str(name).unwrap().unwrap();
+    let path = from_c_str(path).unwrap();
+    let schema_json = from_c_str(schema_json).unwrap().unwrap();
+    let schema = Schema::from_json(schema_json.as_bytes())?;
+
+    let compact_condition = if compact_min_ratio.is_nan() {
+        None
+    } else {
+        Some(CompactCondition {
+            min_file_size: compact_min_file_size as u64,
+            min_bytes: compact_min_bytes as u64,
+            min_ratio: compact_min_ratio,
+        })
+    };
+
+    let instance = IsarInstance::open(
+        name,
+        path,
+        schema,
+        max_size_mib as usize,
+        relaxed_durability,
+        compact_condition,
+    )?;
+    Ok(Arc::into_raw(instance))
+}
+
 #[no_mangle]
 pub unsafe extern "C" fn isar_instance_create(
     isar: *mut *const IsarInstance,
@@ -40,35 +78,18 @@ pub unsafe extern "C" fn isar_instance_create(
     compact_min_bytes: u32,
     compact_min_ratio: f64,
 ) -> i64 {
-    let open = || -> Result<()> {
-        let name = from_c_str(name).unwrap().unwrap();
-        let path = from_c_str(path).unwrap();
-        let schema_json = from_c_str(schema_json).unwrap().unwrap();
-        let schema = Schema::from_json(schema_json.as_bytes())?;
-
-        let compact_condition = if compact_min_ratio.is_nan() {
-            None
-        } else {
-            Some(CompactCondition {
-                min_file_size: compact_min_file_size as u64,
-                min_bytes: compact_min_bytes as u64,
-                min_ratio: compact_min_ratio,
-            })
-        };
-
-        let instance = IsarInstance::open(
+    isar_try! {
+        isar.write(open_instance(
             name,
             path,
-            schema,
-            max_size_mib as usize,
+            schema_json,
+            max_size_mib,
             relaxed_durability,
-            compact_condition,
-        )?;
-        isar.write(Arc::into_raw(instance));
-        Ok(())
-    };
-
-    open().into_dart_result_code()
+            compact_min_file_size,
+            compact_min_bytes,
+            compact_min_ratio,
+        )?);
+    }
 }
 
 #[no_mangle]
@@ -93,8 +114,7 @@ pub unsafe extern "C" fn isar_instance_create_async(
         let name = name;
         let path = path;
         let schema_json = schema_json;
-        let result = isar_instance_create(
-            isar.0,
+        let opened = open_instance(
             name.0,
             path.0,
             schema_json.0,
@@ -104,7 +124,19 @@ pub unsafe extern "C" fn isar_instance_create_async(
             compact_min_bytes,
             compact_min_ratio,
         );
-        dart_post_int(port, result);
+        // Kept here: Dart hands the same slot to every open of an isolate, so
+        // the slot may hold the handle of another open by now.
+        let handle = opened.as_ref().ok().copied();
+        if let Some(handle) = handle {
+            isar.0.write(handle);
+        }
+        if !dart_post_int(port, opened.map(|_| ()).into_dart_result_code()) {
+            if let Some(handle) = handle {
+                // The isolate that asked is gone and nobody will close its
+                // handle.
+                isar_instance_close(handle);
+            }
+        }
     });
 }
 
@@ -157,15 +189,20 @@ pub unsafe extern "C" fn isar_instance_get_size(
 
 #[no_mangle]
 pub unsafe extern "C" fn isar_instance_copy_to_file(
-    instance: &'static IsarInstance,
+    instance: *const IsarInstance,
     path: *const c_char,
     port: DartPort,
 ) {
     let path = CharsSend(path);
+    let instance_ref = InstanceRef::new(instance);
+    let instance: &'static IsarInstance = &*instance;
     run_async(move || {
         let path = path;
         let path = from_c_str(path.0).unwrap().unwrap();
         let result = instance.copy_to_file(path);
+        // Before the answer, so that a close which follows it finds the
+        // instance free.
+        drop(instance_ref);
         dart_post_int(port, result.into_dart_result_code());
     });
 }
