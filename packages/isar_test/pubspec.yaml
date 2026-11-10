@@ -39,6 +39,5 @@ dependency_overrides:
     path: ../isar_community_flutter_libs
   isar_community_generator:
     path: ../isar_community_generator
-  test_api: 0.7.7
 
 
